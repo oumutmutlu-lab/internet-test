@@ -1,0 +1,58 @@
+
+══════════════════════════════════════════════════
+    INTERNET TEST v1.0
+    Kurulum ve Kullanim Kilavuzu
+══════════════════════════════════════════════════
+
+NE ISE YARAR?
+─────────────
+Bu program internet baglantinizi 7/24 izler:
+  - Baglanti kopmalarini aninda tespit eder
+  - Kopmanin sebebini otomatik analiz eder
+    (WiFi sorunu, modem sorunu, DNS sorunu, ISP sorunu)
+  - Kopma gecmisini kaydeder
+  - Gecikme (ping) grafigi cizer
+  - Bilgisayar acildiginda otomatik baslar
+
+KURULUM (WINDOWS)
+─────────────
+1. "kur.bat" dosyasina cift tiklayin
+2. "Herhangi bir tusa basin" mesajinda Enter'a basin
+3. Kurulum otomatik tamamlanir
+4. "Simdi baslatmak ister misiniz?" sorusuna E yazin
+
+KURULUM (iPHONE / iPAD)
+─────────────
+1. Linki Safari'de acin
+2. Asagidaki paylasim butonuna (kare + ok) tiklayin
+3. "Ana Ekrana Ekle" secenegini secin
+4. "Ekle" butonuna basin
+Artik ana ekraninizda bir uygulama gibi gorunecek!
+
+KURULUM (ANDROID)
+─────────────
+1. Linki Chrome'da acin
+2. Sag ustteki 3 noktaya tiklayin
+3. "Ana ekrana ekle" secenegini secin
+4. "Ekle" butonuna basin
+
+KULLANIM
+─────────────
+- Masaustunuzdeki "Internet Test" kisayoluna tiklayin
+- Tarayicinizda izleme paneli acilacaktir
+- Sayfayi arka planda acik birakin
+- Bilgisayariniz her acildiginda otomatik baslar
+
+KALDIRMA
+─────────────
+Programi kaldirmak icin:
+  %LOCALAPPDATA%\InternetTest\kaldir.bat
+dosyasina cift tiklayin.
+
+SISTEM GEREKSINIMLERI
+─────────────
+- Windows 10 / 11, iPhone, iPad, Android, Mac
+- Herhangi bir modern tarayici (Chrome, Edge, Safari, Firefox)
+- Baska hicbir program gerekmez!
+
+══════════════════════════════════════════════════

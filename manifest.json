@@ -1,0 +1,20 @@
+{
+  "name": "Internet Test",
+  "short_name": "Internet Test",
+  "description": "Gerçek zamanlı internet bağlantı testi, kopma tespiti ve tanılama",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0a0e1a",
+  "theme_color": "#3b82f6",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["utilities", "productivity"],
+  "lang": "tr"
+}

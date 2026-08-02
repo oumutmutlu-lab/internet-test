@@ -1,0 +1,5 @@
+# Ignore zip packages
+*.zip
+# Windows temporary files
+Thumbs.db
+Desktop.ini

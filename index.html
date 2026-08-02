@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Internet Test</title>
+    <meta name="description" content="Gerçek zamanlı internet bağlantı testi, kopma tespiti ve tanılama">
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0a0e1a">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- iOS PWA -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Internet Test">
+    <link rel="apple-touch-icon" href="icon-512.png">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Animated background particles -->
+        <div class="bg-particles" id="bgParticles"></div>
+
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <div class="logo-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12.55a11 11 0 0 1 14.08 0"/>
+                        <path d="M1.42 9a16 16 0 0 1 21.16 0"/>
+                        <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+                        <line x1="12" y1="20" x2="12.01" y2="20"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="app-title">Internet Test</h1>
+                    <p class="app-subtitle">Gerçek zamanlı bağlantı testi & tanılama</p>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="header-clock" id="headerClock">--:--:--</div>
+                <button class="btn-clear" id="btnClear" title="Geçmişi Temizle">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="3 6 5 6 21 6"/>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Status Card -->
+        <section class="status-section">
+            <div class="status-card" id="statusCard">
+                <div class="status-glow" id="statusGlow"></div>
+                <div class="status-icon-wrapper">
+                    <div class="status-icon" id="statusIcon">
+                        <div class="pulse-ring" id="pulseRing"></div>
+                        <svg id="iconConnected" class="icon-svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12.55a11 11 0 0 1 14.08 0"/>
+                            <path d="M1.42 9a16 16 0 0 1 21.16 0"/>
+                            <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+                            <line x1="12" y1="20" x2="12.01" y2="20"/>
+                        </svg>
+                        <svg id="iconDisconnected" class="icon-svg hidden" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="1" y1="1" x2="23" y2="23"/>
+                            <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/>
+                            <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/>
+                            <path d="M10.71 5.05A16 16 0 0 1 22.56 9"/>
+                            <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/>
+                            <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+                            <line x1="12" y1="20" x2="12.01" y2="20"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="status-text-wrapper">
+                    <h2 class="status-label" id="statusLabel">Kontrol Ediliyor...</h2>
+                    <p class="status-detail" id="statusDetail">Bağlantı durumu kontrol ediliyor</p>
+                </div>
+                <div class="status-uptime" id="statusUptime">
+                    <span class="uptime-label">Süre:</span>
+                    <span class="uptime-value" id="uptimeValue">00:00:00</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Grid -->
+        <section class="stats-grid">
+            <div class="stat-card" id="statLatency">
+                <div class="stat-icon latency-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                </div>
+                <div class="stat-content">
+                    <span class="stat-value" id="latencyValue">-- ms</span>
+                    <span class="stat-label">Gecikme (Ping)</span>
+                </div>
+                <div class="stat-bar">
+                    <div class="stat-bar-fill latency-bar" id="latencyBar"></div>
+                </div>
+            </div>
+
+            <div class="stat-card" id="statDisconnects">
+                <div class="stat-icon disconnect-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                </div>
+                <div class="stat-content">
+                    <span class="stat-value" id="disconnectCount">0</span>
+                    <span class="stat-label">Toplam Kopma</span>
+                </div>
+            </div>
+
+            <div class="stat-card" id="statTotalDown">
+                <div class="stat-icon downtime-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/>
+                        <line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                    </svg>
+                </div>
+                <div class="stat-content">
+                    <span class="stat-value" id="totalDowntime">00:00:00</span>
+                    <span class="stat-label">Toplam Kesinti Süresi</span>
+                </div>
+            </div>
+
+            <div class="stat-card" id="statAvgLatency">
+                <div class="stat-icon avg-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                    </svg>
+                </div>
+                <div class="stat-content">
+                    <span class="stat-value" id="avgLatency">-- ms</span>
+                    <span class="stat-label">Ortalama Gecikme</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Latency Chart -->
+        <section class="chart-section">
+            <div class="section-header">
+                <h3 class="section-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                    </svg>
+                    Gecikme Grafiği
+                </h3>
+                <span class="section-badge" id="chartInterval">Son 60 ölçüm</span>
+            </div>
+            <div class="chart-container">
+                <canvas id="latencyChart"></canvas>
+                <div class="chart-overlay" id="chartOverlay">
+                    <p>Veri toplanıyor...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Connection Timeline -->
+        <section class="timeline-section">
+            <div class="section-header">
+                <h3 class="section-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                    Bağlantı Zaman Çizelgesi
+                </h3>
+            </div>
+            <div class="timeline-bar-container">
+                <div class="timeline-bar" id="timelineBar"></div>
+                <div class="timeline-labels">
+                    <span id="timelineStart">--:--</span>
+                    <span id="timelineEnd">--:--</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Diagnostics Panel -->
+        <section class="diag-section" id="diagSection" style="display:none;">
+            <div class="section-header">
+                <h3 class="section-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 11l3 3L22 4"/>
+                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                    </svg>
+                    Kopma Tanılama
+                </h3>
+                <span class="diag-status-badge" id="diagStatusBadge">Çalışıyor...</span>
+            </div>
+            <div class="diag-result-card" id="diagResultCard">
+                <div class="diag-verdict" id="diagVerdict">
+                    <div class="diag-verdict-icon" id="diagVerdictIcon">🔍</div>
+                    <div class="diag-verdict-text">
+                        <h4 id="diagVerdictTitle">Tanılama çalışıyor...</h4>
+                        <p id="diagVerdictDesc">Bağlantı sorunlarının kaynağı tespit ediliyor</p>
+                    </div>
+                </div>
+                <div class="diag-tests" id="diagTests">
+                    <!-- Tests will be rendered here -->
+                </div>
+                <div class="diag-info" id="diagInfo">
+                    <!-- Connection info will be shown here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Event Log -->
+        <section class="log-section">
+            <div class="section-header">
+                <h3 class="section-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                    </svg>
+                    Olay Geçmişi
+                </h3>
+                <span class="section-badge" id="eventCount">0 olay</span>
+            </div>
+            <div class="log-container" id="logContainer">
+                <div class="log-empty" id="logEmpty">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                    </svg>
+                    <p>Henüz bir olay kaydedilmedi</p>
+                    <span>Bağlantı kopmaları burada listelenecek</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>İzleme başlangıcı: <span id="monitorStart">--</span> | Kontrol aralığı: <span id="checkInterval">3 saniye</span></p>
+        </footer>
+    </div>
+
+    <!-- Audio notification -->
+    <audio id="disconnectSound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgiKisn3RTPUFxk6q0oXhUPkJ0mKu1oXpWP0R2mqu1oHxYQEV3m6u0n31ZQUZ4m6u0nn1aQkd5m6uznn5bQ0h5m6uznn5bQ0h5m6uynn5bQ0h5m6uynnxaQ0h5nKuynn1bREh5nKuynn1bREh5nKuxnXxbREh5nKuxnXxbREh5nKuxnXxbQ0h5nKuxnXxbQ0h5m6uxnXxbQ0h5m6uynn1bQ0h5m6uynn1bQ0h5m6uzn31bQ0d5m6uzn31aQkd4m6u0n31aQkZ4m6u0n35aQUZ3m6u1oH5ZQEV3mqu1oH9YQER2mqu2oYBXP0N1mau2oYFWPkJ0mKu3ooJVPUFzmKu3ooNUPEBymKy4o4NTO0BxmKy4o4NUPEB=" type="audio/wav">
+    </audio>
+
+    <script src="app.js"></script>
+</body>
+</html>
