@@ -81,6 +81,7 @@
         diagVerdictDesc: document.getElementById('diagVerdictDesc'),
         diagTests: document.getElementById('diagTests'),
         diagInfo: document.getElementById('diagInfo'),
+        btnClearLog: document.getElementById('btnClearLog'),
     };
 
     // ========================================
@@ -890,7 +891,7 @@
                         <div class="log-meta">Bağlantı kopması tespit edildi</div>
                         ${diagHTML}
                     </div>
-                    <div class="log-time">${formatTime(event.time)}</div>
+                    <div class="log-time">${formatEventTime(event.time)}</div>
                 `;
             } else {
                 entry.innerHTML = `
@@ -902,7 +903,7 @@
                             ${event.duration ? `<span class="log-duration">Kesinti: ${formatDuration(event.duration)}</span>` : ''}
                         </div>
                     </div>
-                    <div class="log-time">${formatTime(event.time)}</div>
+                    <div class="log-time">${formatEventTime(event.time)}</div>
                 `;
             }
 
@@ -942,6 +943,38 @@
             minute: '2-digit',
             second: '2-digit',
         });
+    }
+
+    function formatEventTime(date) {
+        const now = new Date();
+        const isToday = date.getDate() === now.getDate() &&
+                        date.getMonth() === now.getMonth() &&
+                        date.getFullYear() === now.getFullYear();
+        
+        const yesterday = new Date(now);
+        yesterday.setDate(now.getDate() - 1);
+        const isYesterday = date.getDate() === yesterday.getDate() &&
+                            date.getMonth() === yesterday.getMonth() &&
+                            date.getFullYear() === yesterday.getFullYear();
+        
+        const timeStr = date.toLocaleTimeString('tr-TR', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+        });
+        
+        if (isToday) {
+            return `Bugün ${timeStr}`;
+        } else if (isYesterday) {
+            return `Dün ${timeStr}`;
+        } else {
+            const dateStr = date.toLocaleDateString('tr-TR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+            return `${dateStr} ${timeStr}`;
+        }
     }
 
     function formatDateTime(date) {
@@ -1116,6 +1149,9 @@
 
         // Clear button
         dom.btnClear.addEventListener('click', clearHistory);
+        if (dom.btnClearLog) {
+            dom.btnClearLog.addEventListener('click', clearHistory);
+        }
 
         // Page visibility: check immediately when page becomes visible
         document.addEventListener('visibilitychange', () => {

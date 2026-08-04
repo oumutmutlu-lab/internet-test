@@ -709,6 +709,33 @@ body {
     border-radius: 20px;
 }
 
+.log-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-clear-log {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.btn-clear-log:hover {
+    background: var(--accent-red-soft);
+    color: var(--accent-red);
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+
 .chart-container {
     position: relative;
     height: 200px;
