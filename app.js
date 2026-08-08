@@ -336,7 +336,7 @@
 
         // Status change: came back online
         if (wasOnline === false && online) {
-            const downDuration = now - state.lastOffline;
+            const downDuration = state.lastOffline ? (now - state.lastOffline) : 0;
             state.totalDowntimeMs += downDuration;
             state.isOnline = true;
             state.statusSince = now;
@@ -895,7 +895,8 @@
                 `;
             } else {
                 let detailsHTML = '';
-                if (event.duration) {
+                // Sanitize duration to prevent displaying corrupt/epoch duration values (outages > 24 hours)
+                if (event.duration && event.duration < 24 * 60 * 60 * 1000) {
                     const disconnectTime = new Date(event.time.getTime() - event.duration);
                     detailsHTML = `
                         <div class="log-meta">
@@ -1073,6 +1074,9 @@
                     time: l.time instanceof Date ? l.time.getTime() : l.time,
                     latency: l.latency,
                 })),
+                lastOffline: state.lastOffline ? state.lastOffline.getTime() : null,
+                lastOnline: state.lastOnline ? state.lastOnline.getTime() : null,
+                isOnline: state.isOnline,
                 lastSaved: Date.now(),
             };
             localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(data));
@@ -1108,6 +1112,9 @@
             }));
 
             state.timelineSegments = data.timelineSegments || [];
+            state.lastOffline = data.lastOffline ? new Date(data.lastOffline) : null;
+            state.lastOnline = data.lastOnline ? new Date(data.lastOnline) : null;
+            state.isOnline = data.isOnline !== undefined ? data.isOnline : null;
 
             state.latencyHistory = (data.latencyHistory || []).map(l => ({
                 time: new Date(l.time),
