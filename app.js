@@ -894,14 +894,26 @@
                     <div class="log-time">${formatEventTime(event.time)}</div>
                 `;
             } else {
+                let detailsHTML = '';
+                if (event.duration) {
+                    const disconnectTime = new Date(event.time.getTime() - event.duration);
+                    detailsHTML = `
+                        <div class="log-meta">
+                            Kopma: <strong>${formatTime(disconnectTime)}</strong> ➔ Geri Gelme: <strong>${formatTime(event.time)}</strong>
+                            <span class="log-duration" style="margin-left: 8px;">Süre: ${formatDurationFriendly(event.duration)}</span>
+                        </div>
+                    `;
+                } else {
+                    detailsHTML = `
+                        <div class="log-meta">Bağlantı yeniden kuruldu</div>
+                    `;
+                }
+
                 entry.innerHTML = `
                     <div class="log-dot up"></div>
                     <div class="log-content">
                         <div class="log-title up">✓ Bağlantı geri geldi</div>
-                        <div class="log-meta">
-                            Bağlantı yeniden kuruldu
-                            ${event.duration ? `<span class="log-duration">Kesinti: ${formatDuration(event.duration)}</span>` : ''}
-                        </div>
+                        ${detailsHTML}
                     </div>
                     <div class="log-time">${formatEventTime(event.time)}</div>
                 `;
@@ -986,6 +998,20 @@
             month: '2-digit',
             year: 'numeric',
         });
+    }
+
+    function formatDurationFriendly(ms) {
+        if (ms < 0) ms = 0;
+        const totalSec = Math.floor(ms / 1000);
+        if (totalSec < 60) {
+            return `${totalSec} saniye`;
+        }
+        const minutes = Math.floor(totalSec / 60);
+        const seconds = totalSec % 60;
+        if (seconds === 0) {
+            return `${minutes} dakika`;
+        }
+        return `${minutes} dk ${seconds} sn`;
     }
 
     function formatDuration(ms) {
