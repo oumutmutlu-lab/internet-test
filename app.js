@@ -1002,6 +1002,7 @@
     let animFrameId = null;
     let currentDisplayValue = 0;
     let targetDisplayValue = 0;
+    let currentPhaseType = '';
 
     function updateGaugeSmoothly() {
         const diff = targetDisplayValue - currentDisplayValue;
@@ -1033,7 +1034,7 @@
             const downEntries = entries.filter(e => e.name.includes('__down'));
             const upEntries = entries.filter(e => e.name.includes('__up'));
 
-            const currentPhase = speedTestEngine.activeMeasurement ? speedTestEngine.activeMeasurement.id : '';
+            const currentPhase = currentPhaseType;
 
             if (currentPhase === 'download' && downEntries.length > 0) {
                 const recent = downEntries.slice(-4);
@@ -1136,45 +1137,51 @@
             // Start live speedometer ticker
             startLiveSpeedometer();
 
+            // Reset current phase type
+            currentPhaseType = '';
+
             // 1. Phase change handler
             speedTestEngine.onPhaseChange = (phase) => {
-                const phaseId = phase.measurementId;
+                currentPhaseType = phase.measurement ? phase.measurement.type : '';
                 
                 // Clear active states
                 cards.forEach(c => c.className = 'speed-metric-card');
 
-                if (phaseId === 'latency') {
+                if (currentPhaseType === 'latency') {
                     dom.speedTestStatus.textContent = 'Gecikme Ölçülüyor...';
                     dom.metricPing.classList.add('active');
                     dom.metricJitter.classList.add('active');
                     dom.gaugeUnit.textContent = 'ms';
                     dom.gaugeFill.className.baseVal = 'gauge-ring-fill';
-                } else if (phaseId === 'download') {
+                } else if (currentPhaseType === 'download') {
                     dom.speedTestStatus.textContent = 'İndirme Ölçülüyor...';
                     dom.metricDownload.classList.add('active');
                     dom.gaugeUnit.textContent = 'Mbps';
-                    dom.gaugeFill.className.baseVal = 'gauge-ring-fill downloading';
-                } else if (phaseId === 'upload') {
+                    dom.gaugeFill.className.baseVal = 'gauge-ring-fill';
+                    currentDisplayValue = 0;
+                    targetDisplayValue = 0;
+                } else if (currentPhaseType === 'upload') {
                     dom.speedTestStatus.textContent = 'Yükleme Ölçülüyor...';
                     dom.metricUpload.classList.add('active-upload');
                     dom.gaugeUnit.textContent = 'Mbps';
                     dom.gaugeFill.className.baseVal = 'gauge-ring-fill uploading';
+                    currentDisplayValue = 0;
+                    targetDisplayValue = 0;
                 }
             };
 
             // 2. Real-time results update handler
             speedTestEngine.onResultsChange = () => {
                 const summary = speedTestEngine.results.getSummary();
-                const phaseId = speedTestEngine.activeMeasurement ? speedTestEngine.activeMeasurement.id : '';
 
                 // Latency & Jitter
-                if (summary.latency) {
+                if (summary.latency !== undefined) {
                     dom.speedPing.textContent = `${Math.round(summary.latency)} ms`;
-                    if (phaseId === 'latency') {
+                    if (currentPhaseType === 'latency') {
                         setTargetGaugeValue(Math.round(summary.latency));
                     }
                 }
-                if (summary.jitter) {
+                if (summary.jitter !== undefined) {
                     dom.speedJitter.textContent = `${Math.round(summary.jitter)} ms`;
                 }
 
@@ -1182,7 +1189,7 @@
                 if (summary.download) {
                     const dlMbps = (summary.download / 1000000).toFixed(1);
                     dom.speedDownload.textContent = `${dlMbps} Mbps`;
-                    if (phaseId === 'download') {
+                    if (currentPhaseType === 'download') {
                         setTargetGaugeValue(dlMbps);
                     }
                 }
@@ -1191,7 +1198,7 @@
                 if (summary.upload) {
                     const ulMbps = (summary.upload / 1000000).toFixed(1);
                     dom.speedUpload.textContent = `${ulMbps} Mbps`;
-                    if (phaseId === 'upload') {
+                    if (currentPhaseType === 'upload') {
                         setTargetGaugeValue(ulMbps);
                     }
                 }
