@@ -947,6 +947,9 @@
     let currentDisplayValue = 0;
     let targetDisplayValue = 0;
     let currentPhaseType = '';
+    let phasePeakSpeed = 0;        // Peak speed in current phase (never goes down)
+    let smoothedSpeed = 0;          // EMA smoothed speed value
+    let lastEntryCount = 0;         // Track new resource entries
 
     // Helper to calculate gauge SVG dashoffset dynamically up to 1000 Mbps
     function calcSpeedGaugeOffset(valMbps) {
@@ -960,8 +963,9 @@
 
     function updateGaugeSmoothly() {
         const diff = targetDisplayValue - currentDisplayValue;
-        if (Math.abs(diff) > 0.1) {
-            currentDisplayValue += diff * 0.18;
+        if (Math.abs(diff) > 0.05) {
+            // Slower, smoother lerp for silky animation
+            currentDisplayValue += diff * 0.06;
             dom.gaugeValue.textContent = currentDisplayValue.toFixed(1);
             dom.gaugeFill.style.strokeDashoffset = calcSpeedGaugeOffset(currentDisplayValue);
             animFrameId = requestAnimationFrame(updateGaugeSmoothly);
@@ -974,72 +978,103 @@
 
     function setTargetGaugeValue(val) {
         targetDisplayValue = parseFloat(val) || 0;
+        if (!animFrameId) {
+            animFrameId = requestAnimationFrame(updateGaugeSmoothly);
+        }
+    }
+
+    // Continuously animate gauge (called every frame while test is running)
+    function startGaugeAnimation() {
+        function tick() {
+            if (!speedTestEngine || !speedTestEngine.isRunning) {
+                animFrameId = null;
+                return;
+            }
+            const diff = targetDisplayValue - currentDisplayValue;
+            if (Math.abs(diff) > 0.05) {
+                currentDisplayValue += diff * 0.06;
+            } else {
+                currentDisplayValue = targetDisplayValue;
+            }
+            dom.gaugeValue.textContent = currentDisplayValue.toFixed(1);
+            dom.gaugeFill.style.strokeDashoffset = calcSpeedGaugeOffset(currentDisplayValue);
+            animFrameId = requestAnimationFrame(tick);
+        }
         if (animFrameId) cancelAnimationFrame(animFrameId);
-        updateGaugeSmoothly();
+        animFrameId = requestAnimationFrame(tick);
     }
 
     function startLiveSpeedometer() {
         if (liveTickerInterval) clearInterval(liveTickerInterval);
+        phasePeakSpeed = 0;
+        smoothedSpeed = 0;
+        lastEntryCount = 0;
 
         liveTickerInterval = setInterval(() => {
             if (!speedTestEngine || !speedTestEngine.isRunning) return;
 
-            const entries = performance.getEntriesByType('resource');
-            const downEntries = entries.filter(e => e.name.includes('__down'));
-            const upEntries = entries.filter(e => e.name.includes('__up'));
-
             const currentPhase = currentPhaseType;
+            if (currentPhase !== 'download' && currentPhase !== 'upload') return;
 
-            if (currentPhase === 'download' && downEntries.length > 0) {
-                const recent = downEntries.slice(-4);
-                let totalBytes = 0;
-                let totalDurationMs = 0;
+            const entries = performance.getEntriesByType('resource');
+            const keyword = currentPhase === 'download' ? '__down' : '__up';
+            const filtered = entries.filter(e => e.name.includes(keyword));
 
-                recent.forEach(entry => {
-                    const dur = entry.duration || (performance.now() - entry.startTime);
-                    if (dur > 20 && entry.transferSize > 0) {
-                        totalBytes += entry.transferSize;
-                        totalDurationMs += dur;
-                    }
-                });
+            // Only process if we have new entries
+            if (filtered.length === lastEntryCount) return;
+            lastEntryCount = filtered.length;
 
-                if (totalDurationMs > 0) {
-                    const liveBps = (totalBytes * 8) / (totalDurationMs / 1000);
-                    const liveMbps = (liveBps / 1000000).toFixed(1);
-                    if (parseFloat(liveMbps) > 5) {
-                        setTargetGaugeValue(liveMbps);
-                        dom.speedDownload.textContent = `${liveMbps} Mbps`;
-                    }
+            // Take last 6 completed entries for a stable reading
+            const recent = filtered.slice(-6);
+            let totalBytes = 0;
+            let totalDurationMs = 0;
+
+            recent.forEach(entry => {
+                const dur = entry.duration;
+                if (dur > 10 && entry.transferSize > 0) {
+                    totalBytes += entry.transferSize;
+                    totalDurationMs += dur;
                 }
-            } else if (currentPhase === 'upload' && upEntries.length > 0) {
-                const recent = upEntries.slice(-4);
-                let totalBytes = 0;
-                let totalDurationMs = 0;
+            });
 
-                recent.forEach(entry => {
-                    const dur = entry.duration || (performance.now() - entry.startTime);
-                    if (dur > 20 && entry.transferSize > 0) {
-                        totalBytes += entry.transferSize;
-                        totalDurationMs += dur;
-                    }
-                });
+            if (totalDurationMs > 0 && totalBytes > 0) {
+                const rawMbps = (totalBytes * 8) / (totalDurationMs / 1000) / 1000000;
 
-                if (totalDurationMs > 0) {
-                    const liveBps = (totalBytes * 8) / (totalDurationMs / 1000);
-                    const liveMbps = (liveBps / 1000000).toFixed(1);
-                    if (parseFloat(liveMbps) > 2) {
-                        setTargetGaugeValue(liveMbps);
-                        dom.speedUpload.textContent = `${liveMbps} Mbps`;
-                    }
+                // Exponential moving average for stability
+                if (smoothedSpeed === 0) {
+                    smoothedSpeed = rawMbps;
+                } else {
+                    smoothedSpeed = smoothedSpeed * 0.6 + rawMbps * 0.4;
+                }
+
+                // Only go UP — never let the gauge drop during a phase
+                if (smoothedSpeed > phasePeakSpeed) {
+                    phasePeakSpeed = smoothedSpeed;
+                }
+
+                // Gradually climb toward peak (the gauge always trends upward)
+                const displaySpeed = phasePeakSpeed;
+                const displayMbps = displaySpeed.toFixed(1);
+
+                setTargetGaugeValue(displayMbps);
+
+                if (currentPhase === 'download') {
+                    dom.speedDownload.textContent = `${displayMbps} Mbps`;
+                } else {
+                    dom.speedUpload.textContent = `${displayMbps} Mbps`;
                 }
             }
-        }, 60);
+        }, 150); // Check every 150ms for new data
     }
 
     function stopLiveSpeedometer() {
         if (liveTickerInterval) {
             clearInterval(liveTickerInterval);
             liveTickerInterval = null;
+        }
+        if (animFrameId) {
+            cancelAnimationFrame(animFrameId);
+            animFrameId = null;
         }
     }
 
@@ -1092,8 +1127,9 @@
                 ]
             });
 
-            // Start live speedometer ticker
+            // Start live speedometer ticker and continuous gauge animation
             startLiveSpeedometer();
+            startGaugeAnimation();
 
             // 1. Phase change handler
             speedTestEngine.onPhaseChange = (phase) => {
@@ -1113,12 +1149,18 @@
                     dom.gaugeUnit.textContent = 'Mbps';
                     currentDisplayValue = 0;
                     targetDisplayValue = 0;
+                    phasePeakSpeed = 0;
+                    smoothedSpeed = 0;
+                    lastEntryCount = 0;
                 } else if (currentPhaseType === 'upload') {
                     dom.speedTestStatus.textContent = 'Yükleme Ölçülüyor...';
                     dom.metricUpload.classList.add('active-upload');
                     dom.gaugeUnit.textContent = 'Mbps';
                     currentDisplayValue = 0;
                     targetDisplayValue = 0;
+                    phasePeakSpeed = 0;
+                    smoothedSpeed = 0;
+                    lastEntryCount = 0;
                 }
             };
 
@@ -1137,22 +1179,16 @@
                     dom.speedJitter.textContent = `${Math.round(summary.jitter)} ms`;
                 }
 
-                // Download Bandwidth
+                // Download Bandwidth (only update side card, gauge is handled by live ticker)
                 if (summary.download) {
                     const dlMbps = (summary.download / 1000000).toFixed(1);
                     dom.speedDownload.textContent = `${dlMbps} Mbps`;
-                    if (currentPhaseType === 'download') {
-                        setTargetGaugeValue(dlMbps);
-                    }
                 }
 
-                // Upload Bandwidth
+                // Upload Bandwidth (only update side card, gauge is handled by live ticker)
                 if (summary.upload) {
                     const ulMbps = (summary.upload / 1000000).toFixed(1);
                     dom.speedUpload.textContent = `${ulMbps} Mbps`;
-                    if (currentPhaseType === 'upload') {
-                        setTargetGaugeValue(ulMbps);
-                    }
                 }
             };
 
