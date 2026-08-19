@@ -942,6 +942,11 @@
     // Internet Speed Test Engine
     // ========================================
     let speedTestEngine = null;
+    let liveTickerInterval = null;
+    let animFrameId = null;
+    let currentDisplayValue = 0;
+    let targetDisplayValue = 0;
+    let currentPhaseType = '';
 
     // Helper to calculate gauge SVG dashoffset dynamically up to 1000 Mbps
     function calcSpeedGaugeOffset(valMbps) {
@@ -952,57 +957,6 @@
         const percent = Math.min(val / max, 1);
         return Math.max(0, Math.min(408, 408 * (1 - percent)));
     }
-
-    async function startSpeedTest() {
-        if (speedTestEngine && speedTestEngine.isRunning) {
-            return;
-        }
-
-        // Reset UI
-        dom.btnStartSpeedTest.disabled = true;
-        dom.btnStartSpeedTest.textContent = 'Test Yapılıyor...';
-        dom.speedTestStatus.textContent = 'Bağlanıyor...';
-        dom.speedTestStatus.className = 'section-badge';
-        if (dom.speedGauge) dom.speedGauge.className = 'speed-gauge running';
-        
-        dom.speedDownload.textContent = '-- Mbps';
-        dom.speedUpload.textContent = '-- Mbps';
-        dom.speedPing.textContent = '-- ms';
-        dom.speedJitter.textContent = '-- ms';
-        
-        dom.gaugeValue.textContent = '0.0';
-        dom.gaugeUnit.textContent = 'Mbps';
-        dom.gaugeFill.style.strokeDashoffset = '408';
-        dom.gaugeFill.className.baseVal = 'gauge-ring-fill';
-
-        // Clear active classes
-        const cards = [dom.metricDownload, dom.metricUpload, dom.metricPing, dom.metricJitter];
-        cards.forEach(c => c.className = 'speed-metric-card');
-
-        try {
-            // Dynamically import Cloudflare SpeedTest SDK
-            dom.speedTestStatus.textContent = 'SDK Yükleniyor...';
-            const module = await import('https://esm.sh/@cloudflare/speedtest');
-            const SpeedTestClass = module.default;
-
-            speedTestEngine = new SpeedTestClass({
-                autoStart: false,
-                bandwidthPercentile: 0.98,
-                measurements: [
-                    { type: "latency", numPackets: 10 },
-                    { type: "download", bytes: 1e7, count: 4 },
-                    { type: "download", bytes: 5e7, count: 6 },
-                    { type: "download", bytes: 1e8, count: 8 },
-                    { type: "upload", bytes: 1e7, count: 4 },
-                    { type: "upload", bytes: 5e7, count: 6 }
-                ]
-            });
-
-    let liveTickerInterval = null;
-    let animFrameId = null;
-    let currentDisplayValue = 0;
-    let targetDisplayValue = 0;
-    let currentPhaseType = '';
 
     function updateGaugeSmoothly() {
         const diff = targetDisplayValue - currentDisplayValue;
@@ -1026,7 +980,7 @@
 
     function startLiveSpeedometer() {
         if (liveTickerInterval) clearInterval(liveTickerInterval);
-        
+
         liveTickerInterval = setInterval(() => {
             if (!speedTestEngine || !speedTestEngine.isRunning) return;
 
@@ -1100,16 +1054,20 @@
         dom.speedTestStatus.textContent = 'Bağlanıyor...';
         dom.speedTestStatus.className = 'section-badge';
         if (dom.speedGauge) dom.speedGauge.className = 'speed-gauge running';
-        
+
         dom.speedDownload.textContent = '-- Mbps';
         dom.speedUpload.textContent = '-- Mbps';
         dom.speedPing.textContent = '-- ms';
         dom.speedJitter.textContent = '-- ms';
-        
+
         dom.gaugeValue.textContent = '0.0';
         dom.gaugeUnit.textContent = 'Mbps';
         dom.gaugeFill.style.strokeDashoffset = '408';
         dom.gaugeFill.className.baseVal = 'gauge-ring-fill';
+
+        currentDisplayValue = 0;
+        targetDisplayValue = 0;
+        currentPhaseType = '';
 
         // Clear active classes
         const cards = [dom.metricDownload, dom.metricUpload, dom.metricPing, dom.metricJitter];
@@ -1137,13 +1095,10 @@
             // Start live speedometer ticker
             startLiveSpeedometer();
 
-            // Reset current phase type
-            currentPhaseType = '';
-
             // 1. Phase change handler
             speedTestEngine.onPhaseChange = (phase) => {
                 currentPhaseType = phase.measurement ? phase.measurement.type : '';
-                
+
                 // Clear active states
                 cards.forEach(c => c.className = 'speed-metric-card');
 
@@ -1152,19 +1107,16 @@
                     dom.metricPing.classList.add('active');
                     dom.metricJitter.classList.add('active');
                     dom.gaugeUnit.textContent = 'ms';
-                    dom.gaugeFill.className.baseVal = 'gauge-ring-fill';
                 } else if (currentPhaseType === 'download') {
                     dom.speedTestStatus.textContent = 'İndirme Ölçülüyor...';
                     dom.metricDownload.classList.add('active');
                     dom.gaugeUnit.textContent = 'Mbps';
-                    dom.gaugeFill.className.baseVal = 'gauge-ring-fill';
                     currentDisplayValue = 0;
                     targetDisplayValue = 0;
                 } else if (currentPhaseType === 'upload') {
                     dom.speedTestStatus.textContent = 'Yükleme Ölçülüyor...';
                     dom.metricUpload.classList.add('active-upload');
                     dom.gaugeUnit.textContent = 'Mbps';
-                    dom.gaugeFill.className.baseVal = 'gauge-ring-fill uploading';
                     currentDisplayValue = 0;
                     targetDisplayValue = 0;
                 }
@@ -1208,7 +1160,7 @@
             speedTestEngine.onFinish = (results) => {
                 stopLiveSpeedometer();
                 const summary = results.getSummary();
-                
+
                 dom.speedTestStatus.textContent = 'Tamamlandı';
                 dom.btnStartSpeedTest.disabled = false;
                 dom.btnStartSpeedTest.textContent = 'Yeniden Başlat';
@@ -1217,7 +1169,7 @@
                 // Display final summary values
                 const dlMbps = (summary.download / 1000000).toFixed(1);
                 const ulMbps = (summary.upload / 1000000).toFixed(1);
-                
+
                 dom.speedDownload.textContent = `${dlMbps} Mbps`;
                 dom.speedUpload.textContent = `${ulMbps} Mbps`;
                 dom.speedPing.textContent = `${Math.round(summary.latency)} ms`;
