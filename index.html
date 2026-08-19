@@ -185,10 +185,12 @@
             <div class="speed-test-container">
                 <!-- Gauge / Progress Dial -->
                 <div class="speed-gauge-wrapper">
-                    <div class="speed-gauge">
-                        <svg class="gauge-ring" width="150" height="150">
+                    <div class="speed-gauge" id="speedGauge">
+                        <svg class="gauge-ring" width="150" height="150" viewBox="0 0 150 150">
                             <circle class="gauge-ring-background" cx="75" cy="75" r="65" stroke-width="8" fill="transparent"/>
-                            <circle class="gauge-ring-fill" id="gaugeFill" cx="75" cy="75" r="65" stroke-width="8" fill="transparent" stroke-dasharray="408" stroke-dashoffset="408"/>
+                            <g class="gauge-spinner-group" id="gaugeSpinnerGroup">
+                                <circle class="gauge-ring-fill" id="gaugeFill" cx="75" cy="75" r="65" stroke-width="8" fill="transparent" stroke-dasharray="408" stroke-dashoffset="408"/>
+                            </g>
                         </svg>
                         <div class="gauge-content">
                             <span class="gauge-value" id="gaugeValue">0.0</span>

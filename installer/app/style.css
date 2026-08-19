@@ -1129,25 +1129,40 @@ body {
 }
 
 .gauge-ring {
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: visible;
 }
 
-.speed-gauge.running .gauge-ring {
-    animation: gaugeRotate 3s linear infinite;
+.gauge-spinner-group {
+    transform-origin: 75px 75px;
+    transition: transform 0.4s ease;
+}
+
+.speed-gauge.running .gauge-spinner-group {
+    animation: spinGauge 2s linear infinite;
+}
+
+.speed-gauge.completed .gauge-spinner-group {
+    animation: finishSweep 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .speed-gauge.completed {
     animation: gaugeCelebrate 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-@keyframes gaugeRotate {
+@keyframes spinGauge {
     0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes finishSweep {
+    0% { transform: rotate(0deg); }
+    50% { transform: rotate(180deg); }
     100% { transform: rotate(360deg); }
 }
 
 @keyframes gaugeCelebrate {
     0% { transform: scale(1); }
-    50% { transform: scale(1.08); }
+    50% { transform: scale(1.1); }
     100% { transform: scale(1); }
 }
 
