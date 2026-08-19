@@ -961,29 +961,10 @@
         return Math.max(0, Math.min(408, 408 * (1 - percent)));
     }
 
-    function updateGaugeSmoothly() {
-        const diff = targetDisplayValue - currentDisplayValue;
-        if (Math.abs(diff) > 0.05) {
-            // Slower, smoother lerp for silky animation
-            currentDisplayValue += diff * 0.06;
-            dom.gaugeValue.textContent = currentDisplayValue.toFixed(1);
-            dom.gaugeFill.style.strokeDashoffset = calcSpeedGaugeOffset(currentDisplayValue);
-            animFrameId = requestAnimationFrame(updateGaugeSmoothly);
-        } else {
-            currentDisplayValue = targetDisplayValue;
-            dom.gaugeValue.textContent = currentDisplayValue.toFixed(1);
-            dom.gaugeFill.style.strokeDashoffset = calcSpeedGaugeOffset(currentDisplayValue);
-        }
-    }
-
     function setTargetGaugeValue(val) {
         targetDisplayValue = parseFloat(val) || 0;
-        if (!animFrameId) {
-            animFrameId = requestAnimationFrame(updateGaugeSmoothly);
-        }
     }
 
-    // Continuously animate gauge (called every frame while test is running)
     function startGaugeAnimation() {
         function tick() {
             if (!speedTestEngine || !speedTestEngine.isRunning) {
