@@ -985,7 +985,42 @@
             const module = await import('https://esm.sh/@cloudflare/speedtest');
             const SpeedTestClass = module.default;
 
-            speedTestEngine = new SpeedTestClass({ autoStart: false });
+            speedTestEngine = new SpeedTestClass({
+                autoStart: false,
+                bandwidthPercentile: 0.98,
+                measurements: [
+                    { type: "latency", numPackets: 10 },
+                    { type: "download", bytes: 1e7, count: 4 },
+                    { type: "download", bytes: 5e7, count: 6 },
+                    { type: "download", bytes: 1e8, count: 8 },
+                    { type: "upload", bytes: 1e7, count: 4 },
+                    { type: "upload", bytes: 5e7, count: 6 }
+                ]
+            });
+
+            let animFrameId = null;
+            let currentDisplayValue = 0;
+            let targetDisplayValue = 0;
+
+            function updateGaugeSmoothly() {
+                const diff = targetDisplayValue - currentDisplayValue;
+                if (Math.abs(diff) > 0.1) {
+                    currentDisplayValue += diff * 0.18;
+                    dom.gaugeValue.textContent = currentDisplayValue.toFixed(1);
+                    dom.gaugeFill.style.strokeDashoffset = calcSpeedGaugeOffset(currentDisplayValue);
+                    animFrameId = requestAnimationFrame(updateGaugeSmoothly);
+                } else {
+                    currentDisplayValue = targetDisplayValue;
+                    dom.gaugeValue.textContent = currentDisplayValue.toFixed(1);
+                    dom.gaugeFill.style.strokeDashoffset = calcSpeedGaugeOffset(currentDisplayValue);
+                }
+            }
+
+            function setTargetGaugeValue(val) {
+                targetDisplayValue = parseFloat(val) || 0;
+                if (animFrameId) cancelAnimationFrame(animFrameId);
+                updateGaugeSmoothly();
+            }
 
             // 1. Phase change handler
             speedTestEngine.onPhaseChange = (phase) => {
@@ -1022,9 +1057,7 @@
                 if (summary.latency) {
                     dom.speedPing.textContent = `${Math.round(summary.latency)} ms`;
                     if (phaseId === 'latency') {
-                        dom.gaugeValue.textContent = Math.round(summary.latency);
-                        const offset = Math.max(0, Math.min(408, 408 * (1 - (summary.latency / 300))));
-                        dom.gaugeFill.style.strokeDashoffset = offset;
+                        setTargetGaugeValue(Math.round(summary.latency));
                     }
                 }
                 if (summary.jitter) {
@@ -1036,8 +1069,7 @@
                     const dlMbps = (summary.download / 1000000).toFixed(1);
                     dom.speedDownload.textContent = `${dlMbps} Mbps`;
                     if (phaseId === 'download') {
-                        dom.gaugeValue.textContent = dlMbps;
-                        dom.gaugeFill.style.strokeDashoffset = calcSpeedGaugeOffset(dlMbps);
+                        setTargetGaugeValue(dlMbps);
                     }
                 }
 
@@ -1046,8 +1078,7 @@
                     const ulMbps = (summary.upload / 1000000).toFixed(1);
                     dom.speedUpload.textContent = `${ulMbps} Mbps`;
                     if (phaseId === 'upload') {
-                        dom.gaugeValue.textContent = ulMbps;
-                        dom.gaugeFill.style.strokeDashoffset = calcSpeedGaugeOffset(ulMbps);
+                        setTargetGaugeValue(ulMbps);
                     }
                 }
             };
@@ -1070,11 +1101,9 @@
                 dom.speedPing.textContent = `${Math.round(summary.latency)} ms`;
                 dom.speedJitter.textContent = `${Math.round(summary.jitter)} ms`;
 
-                // Set final gauge position to download speed with adaptive scaling
-                dom.gaugeValue.textContent = dlMbps;
+                // Set final green gauge position smoothly to download speed
                 dom.gaugeUnit.textContent = 'Mbps';
-                dom.gaugeFill.style.strokeDashoffset = calcSpeedGaugeOffset(dlMbps);
-                dom.gaugeFill.className.baseVal = 'gauge-ring-fill completed';
+                setTargetGaugeValue(dlMbps);
                 dom.gaugeFill.className.baseVal = 'gauge-ring-fill completed';
 
                 // Clear all active card pulses
