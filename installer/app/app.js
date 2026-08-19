@@ -1003,7 +1003,7 @@
 
             // 2. Real-time results update handler
             speedTestEngine.onResultsChange = () => {
-                const summary = speedTestEngine.getSummary();
+                const summary = speedTestEngine.results.getSummary();
                 const phaseId = speedTestEngine.activeMeasurement ? speedTestEngine.activeMeasurement.id : '';
 
                 // Latency & Jitter
