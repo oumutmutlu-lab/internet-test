@@ -95,6 +95,7 @@
         metricUpload: document.getElementById('metricUpload'),
         metricPing: document.getElementById('metricPing'),
         metricJitter: document.getElementById('metricJitter'),
+        speedGauge: document.getElementById('speedGauge'),
     };
 
     // ========================================
@@ -952,6 +953,7 @@
         dom.btnStartSpeedTest.textContent = 'Test Yapılıyor...';
         dom.speedTestStatus.textContent = 'Bağlanıyor...';
         dom.speedTestStatus.className = 'section-badge';
+        if (dom.speedGauge) dom.speedGauge.className = 'speed-gauge running';
         
         dom.speedDownload.textContent = '-- Mbps';
         dom.speedUpload.textContent = '-- Mbps';
@@ -1052,6 +1054,7 @@
                 dom.speedTestStatus.textContent = 'Tamamlandı';
                 dom.btnStartSpeedTest.disabled = false;
                 dom.btnStartSpeedTest.textContent = 'Yeniden Başlat';
+                if (dom.speedGauge) dom.speedGauge.className = 'speed-gauge completed';
 
                 // Display final summary values
                 const dlMbps = (summary.download / 1000000).toFixed(1);
@@ -1083,6 +1086,7 @@
             dom.speedTestStatus.textContent = 'Hata Oluştu';
             dom.btnStartSpeedTest.disabled = false;
             dom.btnStartSpeedTest.textContent = 'Hız Testini Başlat';
+            if (dom.speedGauge) dom.speedGauge.className = 'speed-gauge';
             showToast(`Hız testi başlatılamadı: ${error.message || error}`, 'error');
         }
     }

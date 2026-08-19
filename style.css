@@ -1125,6 +1125,30 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: transform 0.3s ease;
+}
+
+.gauge-ring {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.speed-gauge.running .gauge-ring {
+    animation: gaugeRotate 3s linear infinite;
+}
+
+.speed-gauge.completed {
+    animation: gaugeCelebrate 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes gaugeRotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes gaugeCelebrate {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+    100% { transform: scale(1); }
 }
 
 .gauge-ring-background {
@@ -1136,23 +1160,23 @@ body {
     stroke-linecap: round;
     transform: rotate(-90deg);
     transform-origin: 50% 50%;
-    transition: stroke-dashoffset 200ms ease;
+    transition: stroke-dashoffset 200ms ease, stroke 0.3s ease;
     filter: drop-shadow(0 0 6px var(--accent-blue-glow));
 }
 
 .gauge-ring-fill.downloading {
     stroke: var(--accent-blue);
-    filter: drop-shadow(0 0 6px var(--accent-blue-glow));
+    filter: drop-shadow(0 0 8px var(--accent-blue-glow));
 }
 
 .gauge-ring-fill.uploading {
     stroke: var(--accent-purple);
-    filter: drop-shadow(0 0 6px rgba(139, 92, 246, 0.3));
+    filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.4));
 }
 
 .gauge-ring-fill.completed {
     stroke: var(--accent-green);
-    filter: drop-shadow(0 0 6px var(--accent-green-glow));
+    filter: drop-shadow(0 0 10px var(--accent-green-glow));
 }
 
 .gauge-content {
@@ -1170,6 +1194,12 @@ body {
     line-height: 1;
     letter-spacing: -0.03em;
     font-variant-numeric: tabular-nums;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+.speed-gauge.completed .gauge-value {
+    color: var(--accent-green);
+    text-shadow: 0 0 12px var(--accent-green-glow);
 }
 
 .gauge-unit {
