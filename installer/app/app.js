@@ -82,6 +82,19 @@
         diagTests: document.getElementById('diagTests'),
         diagInfo: document.getElementById('diagInfo'),
         btnClearLog: document.getElementById('btnClearLog'),
+        speedTestStatus: document.getElementById('speedTestStatus'),
+        gaugeFill: document.getElementById('gaugeFill'),
+        gaugeValue: document.getElementById('gaugeValue'),
+        gaugeUnit: document.getElementById('gaugeUnit'),
+        btnStartSpeedTest: document.getElementById('btnStartSpeedTest'),
+        speedDownload: document.getElementById('speedDownload'),
+        speedUpload: document.getElementById('speedUpload'),
+        speedPing: document.getElementById('speedPing'),
+        speedJitter: document.getElementById('speedJitter'),
+        metricDownload: document.getElementById('metricDownload'),
+        metricUpload: document.getElementById('metricUpload'),
+        metricPing: document.getElementById('metricPing'),
+        metricJitter: document.getElementById('metricJitter'),
     };
 
     // ========================================
@@ -925,6 +938,156 @@
     }
 
     // ========================================
+    // Internet Speed Test Engine
+    // ========================================
+    let speedTestEngine = null;
+
+    async function startSpeedTest() {
+        if (speedTestEngine && speedTestEngine.isRunning) {
+            return;
+        }
+
+        // Reset UI
+        dom.btnStartSpeedTest.disabled = true;
+        dom.btnStartSpeedTest.textContent = 'Test Yapılıyor...';
+        dom.speedTestStatus.textContent = 'Bağlanıyor...';
+        dom.speedTestStatus.className = 'section-badge';
+        
+        dom.speedDownload.textContent = '-- Mbps';
+        dom.speedUpload.textContent = '-- Mbps';
+        dom.speedPing.textContent = '-- ms';
+        dom.speedJitter.textContent = '-- ms';
+        
+        dom.gaugeValue.textContent = '0.0';
+        dom.gaugeUnit.textContent = 'Mbps';
+        dom.gaugeFill.style.strokeDashoffset = '408';
+        dom.gaugeFill.className.baseVal = 'gauge-ring-fill';
+
+        // Clear active classes
+        const cards = [dom.metricDownload, dom.metricUpload, dom.metricPing, dom.metricJitter];
+        cards.forEach(c => c.className = 'speed-metric-card');
+
+        try {
+            // Dynamically import Cloudflare SpeedTest SDK
+            dom.speedTestStatus.textContent = 'SDK Yükleniyor...';
+            const module = await import('https://esm.sh/@cloudflare/speedtest');
+            const SpeedTestClass = module.default;
+
+            speedTestEngine = new SpeedTestClass({ autoStart: false });
+
+            // 1. Phase change handler
+            speedTestEngine.onPhaseChange = (phase) => {
+                const phaseId = phase.measurementId;
+                
+                // Clear active states
+                cards.forEach(c => c.className = 'speed-metric-card');
+
+                if (phaseId === 'latency') {
+                    dom.speedTestStatus.textContent = 'Gecikme Ölçülüyor...';
+                    dom.metricPing.classList.add('active');
+                    dom.metricJitter.classList.add('active');
+                    dom.gaugeUnit.textContent = 'ms';
+                    dom.gaugeFill.className.baseVal = 'gauge-ring-fill';
+                } else if (phaseId === 'download') {
+                    dom.speedTestStatus.textContent = 'İndirme Ölçülüyor...';
+                    dom.metricDownload.classList.add('active');
+                    dom.gaugeUnit.textContent = 'Mbps';
+                    dom.gaugeFill.className.baseVal = 'gauge-ring-fill downloading';
+                } else if (phaseId === 'upload') {
+                    dom.speedTestStatus.textContent = 'Yükleme Ölçülüyor...';
+                    dom.metricUpload.classList.add('active-upload');
+                    dom.gaugeUnit.textContent = 'Mbps';
+                    dom.gaugeFill.className.baseVal = 'gauge-ring-fill uploading';
+                }
+            };
+
+            // 2. Real-time results update handler
+            speedTestEngine.onResultsChange = () => {
+                const summary = speedTestEngine.getSummary();
+                const phaseId = speedTestEngine.activeMeasurement ? speedTestEngine.activeMeasurement.id : '';
+
+                // Latency & Jitter
+                if (summary.latency) {
+                    dom.speedPing.textContent = `${Math.round(summary.latency)} ms`;
+                    if (phaseId === 'latency') {
+                        dom.gaugeValue.textContent = Math.round(summary.latency);
+                        // Map ping offset: 0ms -> 408, 300ms -> 0 offset
+                        const offset = Math.max(0, Math.min(408, 408 * (1 - (summary.latency / 300))));
+                        dom.gaugeFill.style.strokeDashoffset = offset;
+                    }
+                }
+                if (summary.jitter) {
+                    dom.speedJitter.textContent = `${Math.round(summary.jitter)} ms`;
+                }
+
+                // Download Bandwidth
+                if (summary.download) {
+                    const dlMbps = (summary.download / 1000000).toFixed(1);
+                    dom.speedDownload.textContent = `${dlMbps} Mbps`;
+                    if (phaseId === 'download') {
+                        dom.gaugeValue.textContent = dlMbps;
+                        // Map download offset: 0 -> 408, 200 Mbps -> 0 offset
+                        const offset = Math.max(0, Math.min(408, 408 * (1 - (parseFloat(dlMbps) / 200))));
+                        dom.gaugeFill.style.strokeDashoffset = offset;
+                    }
+                }
+
+                // Upload Bandwidth
+                if (summary.upload) {
+                    const ulMbps = (summary.upload / 1000000).toFixed(1);
+                    dom.speedUpload.textContent = `${ulMbps} Mbps`;
+                    if (phaseId === 'upload') {
+                        dom.gaugeValue.textContent = ulMbps;
+                        // Map upload offset: 0 -> 408, 100 Mbps -> 0 offset
+                        const offset = Math.max(0, Math.min(408, 408 * (1 - (parseFloat(ulMbps) / 100))));
+                        dom.gaugeFill.style.strokeDashoffset = offset;
+                    }
+                }
+            };
+
+            // 3. Test completed handler
+            speedTestEngine.onFinish = (results) => {
+                const summary = results.getSummary();
+                
+                dom.speedTestStatus.textContent = 'Tamamlandı';
+                dom.btnStartSpeedTest.disabled = false;
+                dom.btnStartSpeedTest.textContent = 'Yeniden Başlat';
+
+                // Display final summary values
+                const dlMbps = (summary.download / 1000000).toFixed(1);
+                const ulMbps = (summary.upload / 1000000).toFixed(1);
+                
+                dom.speedDownload.textContent = `${dlMbps} Mbps`;
+                dom.speedUpload.textContent = `${ulMbps} Mbps`;
+                dom.speedPing.textContent = `${Math.round(summary.latency)} ms`;
+                dom.speedJitter.textContent = `${Math.round(summary.jitter)} ms`;
+
+                // Set final gauge position to download speed
+                dom.gaugeValue.textContent = dlMbps;
+                dom.gaugeUnit.textContent = 'Mbps';
+                const offset = Math.max(0, Math.min(408, 408 * (1 - (parseFloat(dlMbps) / 200))));
+                dom.gaugeFill.style.strokeDashoffset = offset;
+                dom.gaugeFill.className.baseVal = 'gauge-ring-fill completed';
+
+                // Clear all active card pulses
+                cards.forEach(c => c.className = 'speed-metric-card');
+
+                showToast('Hız testi başarıyla tamamlandı!', 'success');
+            };
+
+            // Start the test
+            speedTestEngine.play();
+
+        } catch (error) {
+            console.error('Speed test failed:', error);
+            dom.speedTestStatus.textContent = 'Hata Oluştu';
+            dom.btnStartSpeedTest.disabled = false;
+            dom.btnStartSpeedTest.textContent = 'Hız Testini Başlat';
+            showToast('Hız testi başlatılamadı. Lütfen internetinizi kontrol edin.', 'error');
+        }
+    }
+
+    // ========================================
     // Toast Notifications
     // ========================================
     function showToast(message, type) {
@@ -1184,6 +1347,11 @@
         dom.btnClear.addEventListener('click', clearHistory);
         if (dom.btnClearLog) {
             dom.btnClearLog.addEventListener('click', clearHistory);
+        }
+
+        // Speed Test button
+        if (dom.btnStartSpeedTest) {
+            dom.btnStartSpeedTest.addEventListener('click', startSpeedTest);
         }
 
         // Page visibility: check immediately when page becomes visible

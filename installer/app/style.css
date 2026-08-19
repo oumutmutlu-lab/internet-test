@@ -459,7 +459,8 @@ body {
 .chart-section,
 .timeline-section,
 .log-section,
-.diag-section {
+.diag-section,
+.speed-test-section {
     background: var(--bg-card);
     backdrop-filter: blur(20px);
     border: 1px solid var(--border-color);
@@ -1098,4 +1099,225 @@ body {
 @keyframes toastOut {
     from { opacity: 1; transform: translateX(0); }
     to { opacity: 0; transform: translateX(40px); }
+}
+
+/* ========================================
+   Speed Test Section
+   ======================================== */
+.speed-test-container {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 32px;
+    align-items: center;
+}
+
+.speed-gauge-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.speed-gauge {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gauge-ring-background {
+    stroke: rgba(255, 255, 255, 0.03);
+}
+
+.gauge-ring-fill {
+    stroke: var(--accent-blue);
+    stroke-linecap: round;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+    transition: stroke-dashoffset 200ms ease;
+    filter: drop-shadow(0 0 6px var(--accent-blue-glow));
+}
+
+.gauge-ring-fill.downloading {
+    stroke: var(--accent-blue);
+    filter: drop-shadow(0 0 6px var(--accent-blue-glow));
+}
+
+.gauge-ring-fill.uploading {
+    stroke: var(--accent-purple);
+    filter: drop-shadow(0 0 6px rgba(139, 92, 246, 0.3));
+}
+
+.gauge-ring-fill.completed {
+    stroke: var(--accent-green);
+    filter: drop-shadow(0 0 6px var(--accent-green-glow));
+}
+
+.gauge-content {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.gauge-value {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+}
+
+.gauge-unit {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 4px;
+}
+
+.btn-speed-test {
+    width: 100%;
+    max-width: 200px;
+    padding: 12px 24px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: white;
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+
+.btn-speed-test:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(59, 130, 246, 0.3);
+}
+
+.btn-speed-test:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.btn-speed-test:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: none;
+}
+
+.speed-metrics {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.speed-metric-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+}
+
+.speed-metric-card:hover {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: var(--border-glow);
+}
+
+.metric-icon {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.metric-icon.download {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--accent-blue);
+}
+
+.metric-icon.upload {
+    background: rgba(139, 92, 246, 0.1);
+    color: var(--accent-purple);
+}
+
+.metric-icon.ping {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--accent-green);
+}
+
+.metric-icon.jitter {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--accent-amber);
+}
+
+.metric-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.metric-label {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.metric-value {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Speed test card active states */
+.speed-metric-card.active {
+    border-color: var(--accent-blue);
+    background: rgba(59, 130, 246, 0.05);
+    animation: activePulse 1.5s ease-in-out infinite;
+}
+
+.speed-metric-card.active-upload {
+    border-color: var(--accent-purple);
+    background: rgba(139, 92, 246, 0.05);
+    animation: activePulseUpload 1.5s ease-in-out infinite;
+}
+
+@keyframes activePulse {
+    0%, 100% { border-color: rgba(59, 130, 246, 0.3); }
+    50% { border-color: var(--accent-blue); }
+}
+
+@keyframes activePulseUpload {
+    0%, 100% { border-color: rgba(139, 92, 246, 0.3); }
+    50% { border-color: var(--accent-purple); }
+}
+
+@media (max-width: 768px) {
+    .speed-test-container {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .speed-metrics {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
 }

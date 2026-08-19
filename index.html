@@ -169,6 +169,91 @@
             </div>
         </section>
 
+        <!-- Speed Test Section -->
+        <section class="speed-test-section">
+            <div class="section-header">
+                <h3 class="section-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 15 15"/>
+                    </svg>
+                    İnternet Hız Testi
+                </h3>
+                <span class="section-badge" id="speedTestStatus">Hazır</span>
+            </div>
+            
+            <div class="speed-test-container">
+                <!-- Gauge / Progress Dial -->
+                <div class="speed-gauge-wrapper">
+                    <div class="speed-gauge">
+                        <svg class="gauge-ring" width="150" height="150">
+                            <circle class="gauge-ring-background" cx="75" cy="75" r="65" stroke-width="8" fill="transparent"/>
+                            <circle class="gauge-ring-fill" id="gaugeFill" cx="75" cy="75" r="65" stroke-width="8" fill="transparent" stroke-dasharray="408" stroke-dashoffset="408"/>
+                        </svg>
+                        <div class="gauge-content">
+                            <span class="gauge-value" id="gaugeValue">0.0</span>
+                            <span class="gauge-unit" id="gaugeUnit">Mbps</span>
+                        </div>
+                    </div>
+                    <button class="btn-speed-test" id="btnStartSpeedTest">Hız Testini Başlat</button>
+                </div>
+                
+                <!-- Metrics Grid -->
+                <div class="speed-metrics">
+                    <div class="speed-metric-card" id="metricDownload">
+                        <div class="metric-icon download">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <polyline points="19 12 12 19 5 12"/>
+                            </svg>
+                        </div>
+                        <div class="metric-info">
+                            <span class="metric-label">İndirme (Download)</span>
+                            <span class="metric-value" id="speedDownload">-- Mbps</span>
+                        </div>
+                    </div>
+                    
+                    <div class="speed-metric-card" id="metricUpload">
+                        <div class="metric-icon upload">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="19" x2="12" y2="5"/>
+                                <polyline points="5 12 12 5 19 12"/>
+                            </svg>
+                        </div>
+                        <div class="metric-info">
+                            <span class="metric-label">Yükleme (Upload)</span>
+                            <span class="metric-value" id="speedUpload">-- Mbps</span>
+                        </div>
+                    </div>
+                    
+                    <div class="speed-metric-card" id="metricPing">
+                        <div class="metric-icon ping">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                        </div>
+                        <div class="metric-info">
+                            <span class="metric-label">Gecikme (Ping)</span>
+                            <span class="metric-value" id="speedPing">-- ms</span>
+                        </div>
+                    </div>
+                    
+                    <div class="speed-metric-card" id="metricJitter">
+                        <div class="metric-icon jitter">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                            </svg>
+                        </div>
+                        <div class="metric-info">
+                            <span class="metric-label">Jitter</span>
+                            <span class="metric-value" id="speedJitter">-- ms</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Connection Timeline -->
         <section class="timeline-section">
             <div class="section-header">
