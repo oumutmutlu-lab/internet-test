@@ -351,6 +351,19 @@
         <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgiKisn3RTPUFxk6q0oXhUPkJ0mKu1oXpWP0R2mqu1oHxYQEV3m6u0n31ZQUZ4m6u0nn1aQkd5m6uznn5bQ0h5m6uznn5bQ0h5m6uynn5bQ0h5m6uynnxaQ0h5nKuynn1bREh5nKuynn1bREh5nKuxnXxbREh5nKuxnXxbREh5nKuxnXxbQ0h5nKuxnXxbQ0h5m6uxnXxbQ0h5m6uynn1bQ0h5m6uynn1bQ0h5m6uzn31bQ0d5m6uzn31aQkd4m6u0n31aQkZ4m6u0n35aQUZ3m6u1oH5ZQEV3mqu1oH9YQER2mqu2oYBXP0N1mau2oYFWPkJ0mKu3ooJVPUFzmKu3ooNUPEBymKy4o4NTO0BxmKy4o4NUPEB=" type="audio/wav">
     </audio>
 
+    <script>
+    // Emergency cache buster - ensures fresh files are loaded
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+            registrations.forEach(function(reg) { reg.update(); });
+        });
+        caches.keys().then(function(names) {
+            names.forEach(function(name) {
+                if (name !== 'internet-test-v15') caches.delete(name);
+            });
+        });
+    }
+    </script>
     <script src="app.js"></script>
 </body>
 </html>
