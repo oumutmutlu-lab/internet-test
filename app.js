@@ -1132,8 +1132,15 @@
             startGaugeAnimation();
 
             // 1. Phase change handler
+            let previousPhaseType = '';
             speedTestEngine.onPhaseChange = (phase) => {
-                currentPhaseType = phase.measurement ? phase.measurement.type : '';
+                const newPhaseType = phase.measurement ? phase.measurement.type : '';
+                
+                // Only reset gauge when phase TYPE changes (latency→download, download→upload)
+                // NOT when a new measurement of the same type starts (10MB→50MB→100MB downloads)
+                const typeChanged = (newPhaseType !== previousPhaseType);
+                previousPhaseType = newPhaseType;
+                currentPhaseType = newPhaseType;
 
                 // Clear active states
                 cards.forEach(c => c.className = 'speed-metric-card');
@@ -1147,20 +1154,24 @@
                     dom.speedTestStatus.textContent = 'İndirme Ölçülüyor...';
                     dom.metricDownload.classList.add('active');
                     dom.gaugeUnit.textContent = 'Mbps';
-                    currentDisplayValue = 0;
-                    targetDisplayValue = 0;
-                    phasePeakSpeed = 0;
-                    smoothedSpeed = 0;
-                    lastEntryCount = 0;
+                    if (typeChanged) {
+                        currentDisplayValue = 0;
+                        targetDisplayValue = 0;
+                        phasePeakSpeed = 0;
+                        smoothedSpeed = 0;
+                        lastEntryCount = 0;
+                    }
                 } else if (currentPhaseType === 'upload') {
                     dom.speedTestStatus.textContent = 'Yükleme Ölçülüyor...';
                     dom.metricUpload.classList.add('active-upload');
                     dom.gaugeUnit.textContent = 'Mbps';
-                    currentDisplayValue = 0;
-                    targetDisplayValue = 0;
-                    phasePeakSpeed = 0;
-                    smoothedSpeed = 0;
-                    lastEntryCount = 0;
+                    if (typeChanged) {
+                        currentDisplayValue = 0;
+                        targetDisplayValue = 0;
+                        phasePeakSpeed = 0;
+                        smoothedSpeed = 0;
+                        lastEntryCount = 0;
+                    }
                 }
             };
 
