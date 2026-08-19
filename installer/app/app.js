@@ -943,6 +943,16 @@
     // ========================================
     let speedTestEngine = null;
 
+    // Helper to calculate gauge SVG dashoffset dynamically up to 1000 Mbps
+    function calcSpeedGaugeOffset(valMbps) {
+        const val = parseFloat(valMbps) || 0;
+        let max = 100;
+        if (val > 100 && val <= 500) max = 500;
+        if (val > 500) max = 1000;
+        const percent = Math.min(val / max, 1);
+        return Math.max(0, Math.min(408, 408 * (1 - percent)));
+    }
+
     async function startSpeedTest() {
         if (speedTestEngine && speedTestEngine.isRunning) {
             return;
@@ -1013,7 +1023,6 @@
                     dom.speedPing.textContent = `${Math.round(summary.latency)} ms`;
                     if (phaseId === 'latency') {
                         dom.gaugeValue.textContent = Math.round(summary.latency);
-                        // Map ping offset: 0ms -> 408, 300ms -> 0 offset
                         const offset = Math.max(0, Math.min(408, 408 * (1 - (summary.latency / 300))));
                         dom.gaugeFill.style.strokeDashoffset = offset;
                     }
@@ -1028,9 +1037,7 @@
                     dom.speedDownload.textContent = `${dlMbps} Mbps`;
                     if (phaseId === 'download') {
                         dom.gaugeValue.textContent = dlMbps;
-                        // Map download offset: 0 -> 408, 200 Mbps -> 0 offset
-                        const offset = Math.max(0, Math.min(408, 408 * (1 - (parseFloat(dlMbps) / 200))));
-                        dom.gaugeFill.style.strokeDashoffset = offset;
+                        dom.gaugeFill.style.strokeDashoffset = calcSpeedGaugeOffset(dlMbps);
                     }
                 }
 
@@ -1040,9 +1047,7 @@
                     dom.speedUpload.textContent = `${ulMbps} Mbps`;
                     if (phaseId === 'upload') {
                         dom.gaugeValue.textContent = ulMbps;
-                        // Map upload offset: 0 -> 408, 100 Mbps -> 0 offset
-                        const offset = Math.max(0, Math.min(408, 408 * (1 - (parseFloat(ulMbps) / 100))));
-                        dom.gaugeFill.style.strokeDashoffset = offset;
+                        dom.gaugeFill.style.strokeDashoffset = calcSpeedGaugeOffset(ulMbps);
                     }
                 }
             };
@@ -1065,11 +1070,11 @@
                 dom.speedPing.textContent = `${Math.round(summary.latency)} ms`;
                 dom.speedJitter.textContent = `${Math.round(summary.jitter)} ms`;
 
-                // Set final gauge position to download speed
+                // Set final gauge position to download speed with adaptive scaling
                 dom.gaugeValue.textContent = dlMbps;
                 dom.gaugeUnit.textContent = 'Mbps';
-                const offset = Math.max(0, Math.min(408, 408 * (1 - (parseFloat(dlMbps) / 200))));
-                dom.gaugeFill.style.strokeDashoffset = offset;
+                dom.gaugeFill.style.strokeDashoffset = calcSpeedGaugeOffset(dlMbps);
+                dom.gaugeFill.className.baseVal = 'gauge-ring-fill completed';
                 dom.gaugeFill.className.baseVal = 'gauge-ring-fill completed';
 
                 // Clear all active card pulses
