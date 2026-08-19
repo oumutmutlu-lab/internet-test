@@ -1083,7 +1083,7 @@
             dom.speedTestStatus.textContent = 'Hata Oluştu';
             dom.btnStartSpeedTest.disabled = false;
             dom.btnStartSpeedTest.textContent = 'Hız Testini Başlat';
-            showToast('Hız testi başlatılamadı. Lütfen internetinizi kontrol edin.', 'error');
+            showToast(`Hız testi başlatılamadı: ${error.message || error}`, 'error');
         }
     }
 
