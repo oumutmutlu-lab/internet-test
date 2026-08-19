@@ -998,29 +998,143 @@
                 ]
             });
 
-            let animFrameId = null;
-            let currentDisplayValue = 0;
-            let targetDisplayValue = 0;
+    let liveTickerInterval = null;
+    let animFrameId = null;
+    let currentDisplayValue = 0;
+    let targetDisplayValue = 0;
 
-            function updateGaugeSmoothly() {
-                const diff = targetDisplayValue - currentDisplayValue;
-                if (Math.abs(diff) > 0.1) {
-                    currentDisplayValue += diff * 0.18;
-                    dom.gaugeValue.textContent = currentDisplayValue.toFixed(1);
-                    dom.gaugeFill.style.strokeDashoffset = calcSpeedGaugeOffset(currentDisplayValue);
-                    animFrameId = requestAnimationFrame(updateGaugeSmoothly);
-                } else {
-                    currentDisplayValue = targetDisplayValue;
-                    dom.gaugeValue.textContent = currentDisplayValue.toFixed(1);
-                    dom.gaugeFill.style.strokeDashoffset = calcSpeedGaugeOffset(currentDisplayValue);
+    function updateGaugeSmoothly() {
+        const diff = targetDisplayValue - currentDisplayValue;
+        if (Math.abs(diff) > 0.1) {
+            currentDisplayValue += diff * 0.18;
+            dom.gaugeValue.textContent = currentDisplayValue.toFixed(1);
+            dom.gaugeFill.style.strokeDashoffset = calcSpeedGaugeOffset(currentDisplayValue);
+            animFrameId = requestAnimationFrame(updateGaugeSmoothly);
+        } else {
+            currentDisplayValue = targetDisplayValue;
+            dom.gaugeValue.textContent = currentDisplayValue.toFixed(1);
+            dom.gaugeFill.style.strokeDashoffset = calcSpeedGaugeOffset(currentDisplayValue);
+        }
+    }
+
+    function setTargetGaugeValue(val) {
+        targetDisplayValue = parseFloat(val) || 0;
+        if (animFrameId) cancelAnimationFrame(animFrameId);
+        updateGaugeSmoothly();
+    }
+
+    function startLiveSpeedometer() {
+        if (liveTickerInterval) clearInterval(liveTickerInterval);
+        
+        liveTickerInterval = setInterval(() => {
+            if (!speedTestEngine || !speedTestEngine.isRunning) return;
+
+            const entries = performance.getEntriesByType('resource');
+            const downEntries = entries.filter(e => e.name.includes('__down'));
+            const upEntries = entries.filter(e => e.name.includes('__up'));
+
+            const currentPhase = speedTestEngine.activeMeasurement ? speedTestEngine.activeMeasurement.id : '';
+
+            if (currentPhase === 'download' && downEntries.length > 0) {
+                const recent = downEntries.slice(-4);
+                let totalBytes = 0;
+                let totalDurationMs = 0;
+
+                recent.forEach(entry => {
+                    const dur = entry.duration || (performance.now() - entry.startTime);
+                    if (dur > 20 && entry.transferSize > 0) {
+                        totalBytes += entry.transferSize;
+                        totalDurationMs += dur;
+                    }
+                });
+
+                if (totalDurationMs > 0) {
+                    const liveBps = (totalBytes * 8) / (totalDurationMs / 1000);
+                    const liveMbps = (liveBps / 1000000).toFixed(1);
+                    if (parseFloat(liveMbps) > 5) {
+                        setTargetGaugeValue(liveMbps);
+                        dom.speedDownload.textContent = `${liveMbps} Mbps`;
+                    }
+                }
+            } else if (currentPhase === 'upload' && upEntries.length > 0) {
+                const recent = upEntries.slice(-4);
+                let totalBytes = 0;
+                let totalDurationMs = 0;
+
+                recent.forEach(entry => {
+                    const dur = entry.duration || (performance.now() - entry.startTime);
+                    if (dur > 20 && entry.transferSize > 0) {
+                        totalBytes += entry.transferSize;
+                        totalDurationMs += dur;
+                    }
+                });
+
+                if (totalDurationMs > 0) {
+                    const liveBps = (totalBytes * 8) / (totalDurationMs / 1000);
+                    const liveMbps = (liveBps / 1000000).toFixed(1);
+                    if (parseFloat(liveMbps) > 2) {
+                        setTargetGaugeValue(liveMbps);
+                        dom.speedUpload.textContent = `${liveMbps} Mbps`;
+                    }
                 }
             }
+        }, 60);
+    }
 
-            function setTargetGaugeValue(val) {
-                targetDisplayValue = parseFloat(val) || 0;
-                if (animFrameId) cancelAnimationFrame(animFrameId);
-                updateGaugeSmoothly();
-            }
+    function stopLiveSpeedometer() {
+        if (liveTickerInterval) {
+            clearInterval(liveTickerInterval);
+            liveTickerInterval = null;
+        }
+    }
+
+    async function startSpeedTest() {
+        if (speedTestEngine && speedTestEngine.isRunning) {
+            return;
+        }
+
+        // Reset UI
+        dom.btnStartSpeedTest.disabled = true;
+        dom.btnStartSpeedTest.textContent = 'Test Yapılıyor...';
+        dom.speedTestStatus.textContent = 'Bağlanıyor...';
+        dom.speedTestStatus.className = 'section-badge';
+        if (dom.speedGauge) dom.speedGauge.className = 'speed-gauge running';
+        
+        dom.speedDownload.textContent = '-- Mbps';
+        dom.speedUpload.textContent = '-- Mbps';
+        dom.speedPing.textContent = '-- ms';
+        dom.speedJitter.textContent = '-- ms';
+        
+        dom.gaugeValue.textContent = '0.0';
+        dom.gaugeUnit.textContent = 'Mbps';
+        dom.gaugeFill.style.strokeDashoffset = '408';
+        dom.gaugeFill.className.baseVal = 'gauge-ring-fill';
+
+        // Clear active classes
+        const cards = [dom.metricDownload, dom.metricUpload, dom.metricPing, dom.metricJitter];
+        cards.forEach(c => c.className = 'speed-metric-card');
+
+        try {
+            // Dynamically import Cloudflare SpeedTest SDK
+            dom.speedTestStatus.textContent = 'SDK Yükleniyor...';
+            const module = await import('https://esm.sh/@cloudflare/speedtest');
+            const SpeedTestClass = module.default;
+
+            speedTestEngine = new SpeedTestClass({
+                autoStart: false,
+                bandwidthPercentile: 0.98,
+                measurements: [
+                    { type: "latency", numPackets: 10 },
+                    { type: "download", bytes: 1e7, count: 4 },
+                    { type: "download", bytes: 5e7, count: 6 },
+                    { type: "download", bytes: 1e8, count: 8 },
+                    { type: "upload", bytes: 1e7, count: 4 },
+                    { type: "upload", bytes: 5e7, count: 6 }
+                ]
+            });
+
+            // Start live speedometer ticker
+            startLiveSpeedometer();
 
             // 1. Phase change handler
             speedTestEngine.onPhaseChange = (phase) => {
@@ -1085,6 +1199,7 @@
 
             // 3. Test completed handler
             speedTestEngine.onFinish = (results) => {
+                stopLiveSpeedometer();
                 const summary = results.getSummary();
                 
                 dom.speedTestStatus.textContent = 'Tamamlandı';
@@ -1116,6 +1231,7 @@
             speedTestEngine.play();
 
         } catch (error) {
+            stopLiveSpeedometer();
             console.error('Speed test failed:', error);
             dom.speedTestStatus.textContent = 'Hata Oluştu';
             dom.btnStartSpeedTest.disabled = false;
