@@ -1,4 +1,4 @@
-const CACHE_NAME = 'internet-test-v7';
+const CACHE_NAME = 'internet-test-v8';
 const ASSETS = [
     './',
     './index.html',
@@ -26,7 +26,7 @@ self.addEventListener('activate', event => {
     self.clients.claim();
 });
 
-// Fetch - serve from cache, fallback to network
+// Fetch - network first, fallback to cache
 self.addEventListener('fetch', event => {
     const url = new URL(event.request.url);
 
@@ -36,12 +36,12 @@ self.addEventListener('fetch', event => {
     }
 
     event.respondWith(
-        caches.match(event.request).then(cached => {
-            return cached || fetch(event.request).then(response => {
+        fetch(event.request).then(response => {
+            if (response.status === 200) {
                 const clone = response.clone();
                 caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
-                return response;
-            });
-        })
+            }
+            return response;
+        }).catch(() => caches.match(event.request))
     );
 });
