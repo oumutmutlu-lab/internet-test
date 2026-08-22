@@ -61,8 +61,8 @@
         latencyBar: document.getElementById('latencyBar'),
         disconnectCount: document.getElementById('disconnectCount'),
         totalDowntime: document.getElementById('totalDowntime'),
+        headerRight: document.querySelector('.header-right'),
         avgLatency: document.getElementById('avgLatency'),
-        headerClock: document.getElementById('headerClock'),
         chartOverlay: document.getElementById('chartOverlay'),
         latencyChart: document.getElementById('latencyChart'),
         timelineBar: document.getElementById('timelineBar'),
@@ -478,9 +478,7 @@
         }
     }
 
-    function updateClock() {
-        dom.headerClock.textContent = formatTime(new Date());
-    }
+    // updateClock removed since headerClock is removed in the new UI
 
     // ========================================
     // Timeline
@@ -977,8 +975,13 @@
             } else {
                 currentDisplayValue = targetDisplayValue;
             }
-            dom.gaugeValue.textContent = currentDisplayValue.toFixed(1);
-            dom.gaugeFill.style.strokeDashoffset = calcSpeedGaugeOffset(currentDisplayValue);
+            if (currentPhaseType !== 'latency') {
+                dom.gaugeValue.textContent = currentDisplayValue.toFixed(1);
+                dom.gaugeFill.style.strokeDashoffset = calcSpeedGaugeOffset(currentDisplayValue);
+            } else {
+                dom.gaugeValue.textContent = '...';
+                dom.gaugeFill.style.strokeDashoffset = '408';
+            }
             animFrameId = requestAnimationFrame(tick);
         }
         if (animFrameId) cancelAnimationFrame(animFrameId);
@@ -1131,6 +1134,7 @@
                     dom.metricPing.classList.add('active');
                     dom.metricJitter.classList.add('active');
                     dom.gaugeUnit.textContent = 'ms';
+                    dom.gaugeValue.textContent = '...';
                 } else if (currentPhaseType === 'download') {
                     dom.speedTestStatus.textContent = 'İndirme Ölçülüyor...';
                     dom.metricDownload.classList.add('active');
@@ -1138,6 +1142,7 @@
                     if (typeChanged) {
                         currentDisplayValue = 0;
                         targetDisplayValue = 0;
+                        dom.gaugeValue.textContent = '0.0';
                         phasePeakSpeed = 0;
                         smoothedSpeed = 0;
                         lastEntryCount = 0;
@@ -1479,7 +1484,6 @@
         checkConnectivity();
         state.checkTimer = setInterval(checkConnectivity, CONFIG.CHECK_INTERVAL);
         state.uptimeTimer = setInterval(updateUptime, 1000);
-        state.clockTimer = setInterval(updateClock, 1000);
 
         // Setup browser events
         setupBrowserEvents();
