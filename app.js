@@ -1548,13 +1548,33 @@
                             viewRunning.classList.add('hidden');
                             viewResult.classList.remove('hidden');
 
-                            // Custom diagnosis logic if user entered speed
+                            // Custom diagnosis logic
+                            const measuredSpeedStr = document.getElementById('speedDownload').textContent;
+                            const measuredSpeed = parseFloat(measuredSpeedStr);
+                            const hasTest = !isNaN(measuredSpeed) && measuredSpeed > 0;
+                            
                             if (declaredSpeed && declaredSpeed > 0) {
-                                diagnosisText.innerHTML = `Paketinizin <strong>${declaredSpeed} Mbps</strong> olduğunu belirttiniz. Ancak sistemde yaşanan dalgalanmalar veya düşük verimlilik, tarifenizden tam olarak yararlanamadığınızı gösteriyor. Ek olarak mikro kopmalar da mevcut.`;
-                                scriptBoxText.innerHTML = `"Merhaba, kullanmakta olduğum internet paketi ${declaredSpeed} Mbps olmasına rağmen hızımda ve ping değerlerimde sürekli dalgalanma (jitter) yaşıyorum. Sinyal kalitemin (SNR Margin) ve santral bağlantımın kontrol edilmesini talep ediyorum."`;
+                                if (hasTest) {
+                                    const percent = Math.round((measuredSpeed / declaredSpeed) * 100);
+                                    if (percent < 70) {
+                                        diagnosisText.innerHTML = `Paketinizin <strong>${declaredSpeed} Mbps</strong> olduğunu belirttiniz ancak son testinizde sadece <strong>${measuredSpeed} Mbps</strong> alabildiğiniz tespit edildi. İnternetinizin yalnızca %${percent}'sini kullanabiliyorsunuz. Ek olarak mikro kopmalar da mevcut.`;
+                                        scriptBoxText.innerHTML = `"Merhaba, internet paketim ${declaredSpeed} Mbps olmasına rağmen hız testlerimde sadece ${measuredSpeed} Mbps alabiliyorum. Sinyal kalitemin (SNR Margin) ve santral bağlantımın kontrol edilmesini talep ediyorum."`;
+                                    } else {
+                                        diagnosisText.innerHTML = `Paketinizin <strong>${declaredSpeed} Mbps</strong> olduğunu belirttiniz ve son hız testinize (${measuredSpeed} Mbps) göre hızınız gayet normal. Ancak hat değerlerinizde mikro kopmalar (downtime) tespit edildi. Sorun tamamen kablolama veya santral portunda.`;
+                                        scriptBoxText.innerHTML = `"Merhaba, hızımda bir problem olmamasına rağmen hattımda günde birkaç kez ani mikro kopmalar yaşıyorum. Portumun veya bina içi altyapımın kontrol edilmesini talep ediyorum."`;
+                                    }
+                                } else {
+                                    diagnosisText.innerHTML = `Paketinizin <strong>${declaredSpeed} Mbps</strong> olduğunu belirttiniz. Net bir hız yorumu yapabilmem için ana ekrandan "Hız Testini Başlat" butonuna tıklamanız faydalı olur. Şu anki analize göre hattınızda mikro kopmalar tespit edildi.`;
+                                    scriptBoxText.innerHTML = `"Merhaba, internet hattımda ve ping değerlerimde sürekli dalgalanma (jitter) yaşıyorum. Modeme gelen sinyal kalitemin (SNR Margin) ve santral bağlantımın kontrol edilmesini talep ediyorum."`;
+                                }
                             } else {
-                                diagnosisText.innerHTML = `Son yarım saatteki değerlere göre hattınızda <strong>mikro kopmalar</strong> ve yüksek ping dalgalanması tespit edildi. Bu durum genellikle bina içi altyapı eskimesi veya port arızasından kaynaklanır.`;
-                                scriptBoxText.innerHTML = `"Merhaba, internet hız testimde ve ping değerlerimde sürekli dalgalanma (jitter) yaşıyorum. Modeme gelen sinyal kalitemin (SNR Margin) ve santralden gelen portumun kontrol edilmesini, gerekirse port değişikliği yapılmasını talep ediyorum."`;
+                                if (hasTest && measuredSpeed < 20) {
+                                    diagnosisText.innerHTML = `Son hız testinize göre sadece <strong>${measuredSpeed} Mbps</strong> hız alıyorsunuz. Ek olarak hattınızda mikro kopmalar tespit edildi. Hızınız standartların çok altında.`;
+                                    scriptBoxText.innerHTML = `"Merhaba, internet bağlantımda ciddi hız düşüklüğü (${measuredSpeed} Mbps) ve sürekli kopmalar yaşıyorum. Altyapımın ve sinyal değerlerimin incelenmesini talep ediyorum."`;
+                                } else {
+                                    diagnosisText.innerHTML = `Son yarım saatteki değerlere göre hattınızda <strong>mikro kopmalar</strong> ve yüksek ping dalgalanması tespit edildi. Bu durum genellikle bina içi altyapı eskimesi veya port arızasından kaynaklanır.`;
+                                    scriptBoxText.innerHTML = `"Merhaba, internet hız testimde ve ping değerlerimde sürekli dalgalanma (jitter) yaşıyorum. Modeme gelen sinyal kalitemin (SNR Margin) ve santralden gelen portumun kontrol edilmesini, gerekirse port değişikliği yapılmasını talep ediyorum."`;
+                                }
                             }
 
                         }, 500);

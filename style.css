@@ -99,7 +99,7 @@ body {
 .app-container {
     position: relative;
     z-index: 1;
-    max-width: 900px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 24px 20px 40px;
     padding-top: calc(24px + env(safe-area-inset-top));
@@ -1403,4 +1403,35 @@ body {
     .assistant-cta { flex-direction: column; text-align: center; }
     .assistant-icon { margin: 0 0 12px 0; }
     .btn-assistant { margin: 16px 0 0 0; width: 100%; }
+}
+
+/* ========================================
+   Desktop Dashboard Layout (Grid)
+   ======================================== */
+@media (min-width: 1024px) {
+    .app-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas:
+            "header header"
+            "speed status"
+            "speed assistant"
+            "chart assistant"
+            "chart diag"
+            "timeline logs"
+            "faq faq"
+            "footer footer";
+        gap: 0 24px;
+        align-items: start;
+    }
+    .app-header { grid-area: header; }
+    #statusCard { grid-area: status; }
+    .speed-test-section { grid-area: speed; height: 100%; }
+    .chart-section { grid-area: chart; }
+    .timeline-section { grid-area: timeline; }
+    .assistant-cta { grid-area: assistant; margin-top: 0; }
+    #diagSection { grid-area: diag; }
+    .log-section { grid-area: logs; }
+    .seo-faq-section { grid-area: faq; margin-top: 24px; }
+    .app-footer { grid-area: footer; }
 }
