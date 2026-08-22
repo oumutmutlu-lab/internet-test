@@ -1338,3 +1338,63 @@ body {
         gap: 12px;
     }
 }
+
+/* ========================================
+   SEO FAQ Section
+   ======================================== */
+.seo-faq-section { margin-top: 32px; background: rgba(30, 41, 59, 0.5); border-radius: 16px; padding: 24px; border: 1px solid rgba(148, 163, 184, 0.1); margin-bottom: 24px; }
+.seo-faq-section h2 { font-size: 1.25rem; font-weight: 600; color: #fff; margin-bottom: 20px; text-align: center; }
+.faq-list { display: flex; flex-direction: column; gap: 12px; }
+.faq-item { background: rgba(15, 23, 42, 0.6); border-radius: 12px; overflow: hidden; border: 1px solid rgba(148, 163, 184, 0.05); }
+.faq-question { width: 100%; text-align: left; background: none; border: none; padding: 16px 20px; color: #f8fafc; font-weight: 500; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: background 0.2s; }
+.faq-question:hover { background: rgba(255, 255, 255, 0.05); }
+.faq-icon { font-size: 1.2rem; color: var(--accent-blue); transition: transform 0.3s; }
+.faq-item.active .faq-icon { transform: rotate(45deg); color: var(--accent-purple); }
+.faq-answer { padding: 0 20px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out, padding 0.3s ease; color: #94a3b8; font-size: 0.9rem; line-height: 1.6; }
+.faq-item.active .faq-answer { padding: 0 20px 20px 20px; max-height: 500px; }
+
+/* ========================================
+   Smart Assistant
+   ======================================== */
+.assistant-cta { margin-top: 32px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%); border-radius: 16px; padding: 20px; display: flex; align-items: center; justify-content: space-between; border: 1px solid rgba(59, 130, 246, 0.3); box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2); }
+.assistant-icon { font-size: 2.5rem; margin-right: 16px; }
+.assistant-text h3 { color: #fff; font-size: 1.1rem; margin: 0 0 4px 0; }
+.assistant-text p { color: #cbd5e1; font-size: 0.85rem; margin: 0; opacity: 0.9; }
+.btn-assistant { background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; white-space: nowrap; margin-left: 16px; font-family: 'Inter', sans-serif;}
+.btn-assistant:hover { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3); }
+
+.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 9999; opacity: 1; transition: opacity 0.3s; }
+.modal-overlay.hidden { opacity: 0; pointer-events: none; }
+.modal-content { background: #0f172a; width: 90%; max-width: 500px; border-radius: 24px; border: 1px solid rgba(148, 163, 184, 0.1); box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4); overflow: hidden; display: flex; flex-direction: column; }
+.modal-header { padding: 20px 24px; border-bottom: 1px solid rgba(148, 163, 184, 0.1); display: flex; justify-content: space-between; align-items: center; background: rgba(30, 41, 59, 0.5); }
+.modal-header h2 { margin: 0; font-size: 1.2rem; font-weight: 600; color: #fff; }
+.btn-close-modal { background: none; border: none; color: #94a3b8; font-size: 2rem; cursor: pointer; padding: 0; line-height: 0.8; }
+.btn-close-modal:hover { color: #fff; }
+.modal-body { padding: 24px; }
+.assistant-welcome p { color: #cbd5e1; margin-bottom: 16px; font-size: 0.95rem; line-height: 1.5; }
+.assistant-features { list-style: none; padding: 0; margin: 0 0 24px 0; }
+.assistant-features li { padding: 8px 0; color: #94a3b8; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; }
+.btn-primary { width: 100%; background: var(--accent-blue); color: white; border: none; padding: 14px; border-radius: 12px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: background 0.2s; font-family: 'Inter', sans-serif;}
+.btn-primary:hover { background: #2563eb; }
+.loader-spinner { width: 40px; height: 40px; border: 4px solid rgba(59, 130, 246, 0.2); border-top-color: var(--accent-blue); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px auto; }
+.assistant-running { text-align: center; }
+.assistant-running p { color: #fff; font-weight: 500; margin-bottom: 24px; }
+.progress-step { color: #64748b; font-size: 0.9rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.progress-step::before { content: ''; width: 16px; height: 16px; border-radius: 50%; border: 2px solid #64748b; display: inline-block; }
+.progress-step.active { color: var(--accent-blue); font-weight: 500; }
+.progress-step.active::before { border-color: var(--accent-blue); background: var(--accent-blue); box-shadow: 0 0 8px var(--accent-blue); animation: pulseRing 1.5s infinite; }
+.result-badge { display: inline-block; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; margin-bottom: 16px; }
+.result-badge.warning { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+.assistant-result h3 { margin: 0 0 12px 0; color: #fff; font-size: 1.1rem; }
+.assistant-result p { color: #cbd5e1; font-size: 0.95rem; line-height: 1.5; margin-bottom: 24px; }
+.support-script { background: rgba(30, 41, 59, 0.5); padding: 16px; border-radius: 12px; border: 1px solid rgba(148, 163, 184, 0.1); }
+.support-script h4 { margin: 0 0 12px 0; color: #94a3b8; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
+.script-box { background: rgba(15, 23, 42, 0.8); padding: 16px; border-radius: 8px; color: #fff; font-size: 0.95rem; font-style: italic; line-height: 1.6; border-left: 4px solid var(--accent-blue); margin-bottom: 16px; user-select: all; }
+.btn-copy { width: 100%; background: rgba(255, 255, 255, 0.1); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 500; cursor: pointer; transition: background 0.2s; font-family: 'Inter', sans-serif;}
+.btn-copy:hover { background: rgba(255, 255, 255, 0.2); }
+
+@media (max-width: 600px) {
+    .assistant-cta { flex-direction: column; text-align: center; }
+    .assistant-icon { margin: 0 0 12px 0; }
+    .btn-assistant { margin: 16px 0 0 0; width: 100%; }
+}

@@ -345,6 +345,89 @@
             </div>
         </section>
 
+        <!-- Smart Assistant CTA -->
+        <div class="assistant-cta">
+            <div class="assistant-icon">🤖</div>
+            <div class="assistant-text">
+                <h3>İnternetiniz Sürekli Kopuyor mu?</h3>
+                <p>Yapay zeka destekli Arıza Asistanı ile sorunun kaynağını bulun.</p>
+            </div>
+            <button class="btn-assistant" id="btnAssistant">Analiz Et</button>
+        </div>
+
+        <!-- SEO FAQ Section -->
+        <section class="seo-faq-section">
+            <h2>Sıkça Sorulan Sorular</h2>
+            <div class="faq-list">
+                <div class="faq-item">
+                    <button class="faq-question">İnternet Hız Testi Nasıl Doğru Yapılır? <span class="faq-icon">+</span></button>
+                    <div class="faq-answer">
+                        <p>En doğru sonuçları almak için testi başlatmadan önce arka planda indirme yapan uygulamaları (Torrent, Steam, güncelleme vb.) kapatın. Eğer mümkünse teste Wi-Fi yerine modeme Ethernet kablosu ile bağlı bir bilgisayardan katılın. Wi-Fi kullanıyorsanız modeme yakın olduğunuzdan emin olun.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">İdeal Ping (Gecikme) Süresi Kaç ms Olmalıdır? <span class="faq-icon">+</span></button>
+                    <div class="faq-answer">
+                        <p>Ping süresi, verinin sunucuya gidip gelme süresidir. Çevrimiçi (online) oyunlar için <strong>0-30 ms</strong> mükemmel, <strong>30-60 ms</strong> kabul edilebilir sayılır. 100 ms ve üzeri değerlerde oyunlarda "lag" (gecikme) hissedersiniz. Sadece video izlemek ve web'de gezinmek için 100 ms'ye kadar olan ping süreleri sorun yaratmaz.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">Download ve Upload Arasındaki Fark Nedir? <span class="faq-icon">+</span></button>
+                    <div class="faq-answer">
+                        <p><strong>Download (İndirme):</strong> İnternetteki verilerin (izlediğiniz videonun, indirdiğiniz dosyanın) bilgisayarınıza gelme hızıdır. İnternet kullanımının büyük bir kısmını oluşturur.<br><br><strong>Upload (Yükleme):</strong> Sizin cihazınızdan internete giden verinin hızıdır. Görüntülü konuşma yaparken, YouTube'a video yüklerken veya oyunlarda komut gönderirken upload hızınız kullanılır.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">İnternetim Neden Yavaş veya Sürekli Kopuyor? <span class="faq-icon">+</span></button>
+                    <div class="faq-answer">
+                        <p>Bunun birçok nedeni olabilir. Modeminizin aşırı ısınması, Wi-Fi kanal çakışmaları, bina içi ankastre kablolarınızdaki oksitlenme veya altyapı sağlayıcınızın (Servis Sağlayıcı) santralindeki bir sorun buna yol açabilir. <strong>Arıza Asistanı</strong> aracımızı kullanarak problemin kaynağını tam olarak tespit edebilir ve müşteri hizmetlerine ne söylemeniz gerektiğini öğrenebilirsiniz.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Assistant Modal (Hidden by default) -->
+        <div class="modal-overlay hidden" id="assistantModal">
+            <div class="modal-content assistant-modal">
+                <div class="modal-header">
+                    <h2>İnternet Doktoru (Arıza Asistanı)</h2>
+                    <button class="btn-close-modal" id="btnCloseAssistant">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="assistant-welcome" id="assistantWelcome">
+                        <p>Merhaba! Arka planda tuttuğum loglara ve anlık testlere bakarak internetinizdeki problemin kaynağını bulabilirim.</p>
+                        <ul class="assistant-features">
+                            <li>🔍 Kopma desen analizi (Altyapı vs Modem)</li>
+                            <li>📊 Ping dengesizliği (Jitter) tespiti</li>
+                            <li>📞 Müşteri hizmetleri görüşme senaryosu</li>
+                        </ul>
+                        <button class="btn-primary" id="btnStartAnalysis">Teşhise Başla</button>
+                    </div>
+                    <div class="assistant-running hidden" id="assistantRunning">
+                        <div class="loader-spinner"></div>
+                        <p>Hat değerleriniz ve kopma geçmişiniz analiz ediliyor...</p>
+                        <div class="analysis-progress">
+                            <div class="progress-step active">Sunucu erişimi kontrol ediliyor</div>
+                            <div class="progress-step">Gecikme (Jitter) dalgalanması ölçülüyor</div>
+                            <div class="progress-step">Kopma (Downtime) logları inceleniyor</div>
+                        </div>
+                    </div>
+                    <div class="assistant-result hidden" id="assistantResult">
+                        <div class="result-badge warning">Dengesiz Hat (Örnek Sonuç)</div>
+                        <h3>Teşhis Edilen Sorun:</h3>
+                        <p>Son yarım saatteki değerlere göre hattınızda <strong>mikro kopmalar</strong> ve yüksek ping dalgalanması tespit edildi. Bu durum genellikle bina içi altyapı eskimesi veya port arızasından kaynaklanır.</p>
+                        <div class="support-script">
+                            <h4>Müşteri Hizmetlerine Söylemeniz Gerekenler:</h4>
+                            <div class="script-box">
+                                "Merhaba, internet hız testimde ve ping değerlerimde sürekli dalgalanma (jitter) yaşıyorum. Modeme gelen sinyal kalitemin (SNR Margin) ve santralden gelen portumun kontrol edilmesini, gerekirse port değişikliği yapılmasını talep ediyorum."
+                            </div>
+                            <button class="btn-copy" id="btnCopyScript">Metni Kopyala</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Footer -->
         <footer class="app-footer">
             <p>İzleme başlangıcı: <span id="monitorStart">--</span> | Kontrol aralığı: <span id="checkInterval">3 saniye</span></p>

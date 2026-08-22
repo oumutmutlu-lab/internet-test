@@ -1477,6 +1477,70 @@
         // Set monitor start time
         dom.monitorStart.textContent = formatDateTime(state.monitorStart);
 
+        // Setup FAQ Accordion
+        const faqQuestions = document.querySelectorAll('.faq-question');
+        faqQuestions.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const item = btn.parentElement;
+                item.classList.toggle('active');
+            });
+        });
+
+        // Setup Smart Assistant Modal
+        const btnAssistant = document.getElementById('btnAssistant');
+        const modal = document.getElementById('assistantModal');
+        const btnClose = document.getElementById('btnCloseAssistant');
+        const btnStartAnalysis = document.getElementById('btnStartAnalysis');
+        const viewWelcome = document.getElementById('assistantWelcome');
+        const viewRunning = document.getElementById('assistantRunning');
+        const viewResult = document.getElementById('assistantResult');
+        const btnCopyScript = document.getElementById('btnCopyScript');
+
+        if (btnAssistant && modal) {
+            btnAssistant.addEventListener('click', () => {
+                modal.classList.remove('hidden');
+                viewWelcome.classList.remove('hidden');
+                viewRunning.classList.add('hidden');
+                viewResult.classList.add('hidden');
+            });
+
+            btnClose.addEventListener('click', () => modal.classList.add('hidden'));
+            
+            btnStartAnalysis.addEventListener('click', () => {
+                viewWelcome.classList.add('hidden');
+                viewRunning.classList.remove('hidden');
+                
+                // Simulate analysis
+                const steps = document.querySelectorAll('.progress-step');
+                let step = 0;
+                
+                const interval = setInterval(() => {
+                    if (step > 0 && step <= steps.length) {
+                        steps[step - 1].classList.remove('active');
+                        steps[step - 1].style.color = '#10b981'; // Green check
+                        steps[step - 1].innerHTML = '✓ ' + steps[step - 1].innerHTML.replace('✓ ', '');
+                    }
+                    if (step < steps.length) {
+                        steps[step].classList.add('active');
+                    } else {
+                        clearInterval(interval);
+                        setTimeout(() => {
+                            viewRunning.classList.add('hidden');
+                            viewResult.classList.remove('hidden');
+                        }, 500);
+                    }
+                    step++;
+                }, 1500);
+            });
+
+            btnCopyScript.addEventListener('click', () => {
+                const scriptText = document.querySelector('.script-box').textContent.trim();
+                navigator.clipboard.writeText(scriptText);
+                btnCopyScript.textContent = 'Kopyalandı!';
+                setTimeout(() => btnCopyScript.textContent = 'Metni Kopyala', 2000);
+            });
+        }
+
         // Start periodic checks
         checkConnectivity();
         state.checkTimer = setInterval(checkConnectivity, CONFIG.CHECK_INTERVAL);
