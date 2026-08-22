@@ -396,10 +396,20 @@
                 <div class="modal-body">
                     <div class="assistant-welcome" id="assistantWelcome">
                         <p>Merhaba! Arka planda tuttuğum loglara ve anlık testlere bakarak internetinizdeki problemin kaynağını bulabilirim.</p>
+                        
+                        <div class="package-input-group">
+                            <label for="userPackageSpeed">İnternet Paket Hızınız (Opsiyonel)</label>
+                            <div class="package-input-wrapper">
+                                <input type="number" id="userPackageSpeed" placeholder="Örn: 100" min="1" max="10000">
+                                <span>Mbps</span>
+                            </div>
+                        </div>
+
                         <ul class="assistant-features">
-                            <li>🔍 Kopma desen analizi (Altyapı vs Modem)</li>
-                            <li>📊 Ping dengesizliği (Jitter) tespiti</li>
-                            <li>📞 Müşteri hizmetleri görüşme senaryosu</li>
+                            <li>🔍 Kopma desen analizi</li>
+                            <li>📊 Jitter dalgalanması</li>
+                            <li>📞 Müşteri temsilcisi metni</li>
+                            <li>⚡ Hız / Paket uyumsuzluğu</li>
                         </ul>
                         <button class="btn-primary" id="btnStartAnalysis">Teşhise Başla</button>
                     </div>
@@ -409,20 +419,22 @@
                         <div class="analysis-progress">
                             <div class="progress-step active">Sunucu erişimi kontrol ediliyor</div>
                             <div class="progress-step">Gecikme (Jitter) dalgalanması ölçülüyor</div>
+                            <div class="progress-step">Paket hızı uyumluluğu test ediliyor</div>
                             <div class="progress-step">Kopma (Downtime) logları inceleniyor</div>
                         </div>
                     </div>
                     <div class="assistant-result hidden" id="assistantResult">
                         <div class="result-badge warning">Dengesiz Hat (Örnek Sonuç)</div>
                         <h3>Teşhis Edilen Sorun:</h3>
-                        <p>Son yarım saatteki değerlere göre hattınızda <strong>mikro kopmalar</strong> ve yüksek ping dalgalanması tespit edildi. Bu durum genellikle bina içi altyapı eskimesi veya port arızasından kaynaklanır.</p>
+                        <p id="diagnosisText">Son yarım saatteki değerlere göre hattınızda <strong>mikro kopmalar</strong> ve yüksek ping dalgalanması tespit edildi. Bu durum genellikle bina içi altyapı eskimesi veya port arızasından kaynaklanır.</p>
                         <div class="support-script">
                             <h4>Müşteri Hizmetlerine Söylemeniz Gerekenler:</h4>
-                            <div class="script-box">
+                            <div class="script-box" id="scriptBoxText">
                                 "Merhaba, internet hız testimde ve ping değerlerimde sürekli dalgalanma (jitter) yaşıyorum. Modeme gelen sinyal kalitemin (SNR Margin) ve santralden gelen portumun kontrol edilmesini, gerekirse port değişikliği yapılmasını talep ediyorum."
                             </div>
                             <button class="btn-copy" id="btnCopyScript">Metni Kopyala</button>
                         </div>
+                        <button class="btn-primary" id="btnCloseAssistantBottom" style="background: rgba(255,255,255,0.1); margin-top: 16px;">Kapat</button>
                     </div>
                 </div>
             </div>

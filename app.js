@@ -1490,11 +1490,15 @@
         const btnAssistant = document.getElementById('btnAssistant');
         const modal = document.getElementById('assistantModal');
         const btnClose = document.getElementById('btnCloseAssistant');
+        const btnCloseBottom = document.getElementById('btnCloseAssistantBottom');
         const btnStartAnalysis = document.getElementById('btnStartAnalysis');
         const viewWelcome = document.getElementById('assistantWelcome');
         const viewRunning = document.getElementById('assistantRunning');
         const viewResult = document.getElementById('assistantResult');
         const btnCopyScript = document.getElementById('btnCopyScript');
+        const userPackageSpeed = document.getElementById('userPackageSpeed');
+        const diagnosisText = document.getElementById('diagnosisText');
+        const scriptBoxText = document.getElementById('scriptBoxText');
 
         if (btnAssistant && modal) {
             btnAssistant.addEventListener('click', () => {
@@ -1502,23 +1506,39 @@
                 viewWelcome.classList.remove('hidden');
                 viewRunning.classList.add('hidden');
                 viewResult.classList.add('hidden');
+                document.body.style.overflow = 'hidden'; // Prevent background scrolling
             });
 
-            btnClose.addEventListener('click', () => modal.classList.add('hidden'));
+            const closeModal = () => {
+                modal.classList.add('hidden');
+                document.body.style.overflow = '';
+            };
+
+            btnClose.addEventListener('click', closeModal);
+            if (btnCloseBottom) btnCloseBottom.addEventListener('click', closeModal);
             
             btnStartAnalysis.addEventListener('click', () => {
+                const declaredSpeed = parseInt(userPackageSpeed.value, 10);
+
                 viewWelcome.classList.add('hidden');
                 viewRunning.classList.remove('hidden');
                 
                 // Simulate analysis
                 const steps = document.querySelectorAll('.progress-step');
                 let step = 0;
+                // reset steps
+                steps.forEach(s => {
+                    s.classList.remove('active');
+                    s.style.color = '';
+                    s.innerHTML = s.innerHTML.replace('✓ ', '');
+                });
+                steps[0].classList.add('active');
                 
                 const interval = setInterval(() => {
                     if (step > 0 && step <= steps.length) {
                         steps[step - 1].classList.remove('active');
                         steps[step - 1].style.color = '#10b981'; // Green check
-                        steps[step - 1].innerHTML = '✓ ' + steps[step - 1].innerHTML.replace('✓ ', '');
+                        steps[step - 1].innerHTML = '✓ ' + steps[step - 1].innerHTML;
                     }
                     if (step < steps.length) {
                         steps[step].classList.add('active');
@@ -1527,14 +1547,24 @@
                         setTimeout(() => {
                             viewRunning.classList.add('hidden');
                             viewResult.classList.remove('hidden');
+
+                            // Custom diagnosis logic if user entered speed
+                            if (declaredSpeed && declaredSpeed > 0) {
+                                diagnosisText.innerHTML = `Paketinizin <strong>${declaredSpeed} Mbps</strong> olduğunu belirttiniz. Ancak sistemde yaşanan dalgalanmalar veya düşük verimlilik, tarifenizden tam olarak yararlanamadığınızı gösteriyor. Ek olarak mikro kopmalar da mevcut.`;
+                                scriptBoxText.innerHTML = `"Merhaba, kullanmakta olduğum internet paketi ${declaredSpeed} Mbps olmasına rağmen hızımda ve ping değerlerimde sürekli dalgalanma (jitter) yaşıyorum. Sinyal kalitemin (SNR Margin) ve santral bağlantımın kontrol edilmesini talep ediyorum."`;
+                            } else {
+                                diagnosisText.innerHTML = `Son yarım saatteki değerlere göre hattınızda <strong>mikro kopmalar</strong> ve yüksek ping dalgalanması tespit edildi. Bu durum genellikle bina içi altyapı eskimesi veya port arızasından kaynaklanır.`;
+                                scriptBoxText.innerHTML = `"Merhaba, internet hız testimde ve ping değerlerimde sürekli dalgalanma (jitter) yaşıyorum. Modeme gelen sinyal kalitemin (SNR Margin) ve santralden gelen portumun kontrol edilmesini, gerekirse port değişikliği yapılmasını talep ediyorum."`;
+                            }
+
                         }, 500);
                     }
                     step++;
-                }, 1500);
+                }, 1000);
             });
 
             btnCopyScript.addEventListener('click', () => {
-                const scriptText = document.querySelector('.script-box').textContent.trim();
+                const scriptText = scriptBoxText.textContent.trim().replace(/"/g, '');
                 navigator.clipboard.writeText(scriptText);
                 btnCopyScript.textContent = 'Kopyalandı!';
                 setTimeout(() => btnCopyScript.textContent = 'Metni Kopyala', 2000);
