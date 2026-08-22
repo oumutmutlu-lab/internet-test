@@ -1217,6 +1217,25 @@
                 cards.forEach(c => c.className = 'speed-metric-card');
 
                 showToast('Hız testi başarıyla tamamlandı!', 'success');
+
+                // Auto-Diagnosis Logic
+                if (window.autoDiagnosisPending) {
+                    const pendingSpeed = window.autoDiagnosisPending.declaredSpeed;
+                    window.autoDiagnosisPending = null;
+                    
+                    setTimeout(() => {
+                        const btnAssistant = document.getElementById('btnAssistant');
+                        if (btnAssistant) btnAssistant.click();
+                        
+                        setTimeout(() => {
+                            const userPackageSpeed = document.getElementById('userPackageSpeed');
+                            if (userPackageSpeed && pendingSpeed) userPackageSpeed.value = pendingSpeed;
+                            
+                            const btnStart = document.getElementById('btnStartAnalysis');
+                            if (btnStart) btnStart.click();
+                        }, 400); // Wait for modal to animate
+                    }, 1500); // Let the user see the result gauge for 1.5s
+                }
             };
 
             // Start the test
@@ -1519,7 +1538,23 @@
             
             btnStartAnalysis.addEventListener('click', () => {
                 const declaredSpeed = parseInt(userPackageSpeed.value, 10);
+                
+                // Check if speed test has been run
+                const measuredSpeedStr = document.getElementById('speedDownload').textContent;
+                const measuredSpeed = parseFloat(measuredSpeedStr);
+                const hasTest = !isNaN(measuredSpeed) && measuredSpeed > 0;
 
+                if (!hasTest) {
+                    // Auto-trigger speed test first
+                    closeModal();
+                    window.autoDiagnosisPending = { declaredSpeed: declaredSpeed };
+                    const btnSpeed = document.getElementById('btnStartSpeedTest');
+                    if (btnSpeed) btnSpeed.click();
+                    return;
+                }
+
+                // Normal Analysis Flow
+                btnStartAnalysis.disabled = true; // Prevent double click
                 viewWelcome.classList.add('hidden');
                 viewRunning.classList.remove('hidden');
                 
@@ -1538,45 +1573,38 @@
                     if (step > 0 && step <= steps.length) {
                         steps[step - 1].classList.remove('active');
                         steps[step - 1].style.color = '#10b981'; // Green check
-                        steps[step - 1].innerHTML = '✓ ' + steps[step - 1].innerHTML;
+                        if (!steps[step - 1].innerHTML.includes('✓')) {
+                            steps[step - 1].innerHTML = '✓ ' + steps[step - 1].innerHTML;
+                        }
                     }
                     if (step < steps.length) {
                         steps[step].classList.add('active');
                     } else {
                         clearInterval(interval);
+                        btnStartAnalysis.disabled = false;
                         setTimeout(() => {
                             viewRunning.classList.add('hidden');
                             viewResult.classList.remove('hidden');
 
                             // Custom diagnosis logic
-                            const measuredSpeedStr = document.getElementById('speedDownload').textContent;
-                            const measuredSpeed = parseFloat(measuredSpeedStr);
-                            const hasTest = !isNaN(measuredSpeed) && measuredSpeed > 0;
-                            
                             if (declaredSpeed && declaredSpeed > 0) {
-                                if (hasTest) {
-                                    const percent = Math.round((measuredSpeed / declaredSpeed) * 100);
-                                    if (percent < 70) {
-                                        diagnosisText.innerHTML = `Paketinizin <strong>${declaredSpeed} Mbps</strong> olduğunu belirttiniz ancak son testinizde sadece <strong>${measuredSpeed} Mbps</strong> alabildiğiniz tespit edildi. İnternetinizin yalnızca %${percent}'sini kullanabiliyorsunuz. Ek olarak mikro kopmalar da mevcut.`;
-                                        scriptBoxText.innerHTML = `"Merhaba, internet paketim ${declaredSpeed} Mbps olmasına rağmen hız testlerimde sadece ${measuredSpeed} Mbps alabiliyorum. Sinyal kalitemin (SNR Margin) ve santral bağlantımın kontrol edilmesini talep ediyorum."`;
-                                    } else {
-                                        diagnosisText.innerHTML = `Paketinizin <strong>${declaredSpeed} Mbps</strong> olduğunu belirttiniz ve son hız testinize (${measuredSpeed} Mbps) göre hızınız gayet normal. Ancak hat değerlerinizde mikro kopmalar (downtime) tespit edildi. Sorun tamamen kablolama veya santral portunda.`;
-                                        scriptBoxText.innerHTML = `"Merhaba, hızımda bir problem olmamasına rağmen hattımda günde birkaç kez ani mikro kopmalar yaşıyorum. Portumun veya bina içi altyapımın kontrol edilmesini talep ediyorum."`;
-                                    }
+                                const percent = Math.round((measuredSpeed / declaredSpeed) * 100);
+                                if (percent < 70) {
+                                    diagnosisText.innerHTML = `Paketinizin <strong>${declaredSpeed} Mbps</strong> olduğunu belirttiniz ancak az önce yaptığımız testte sadece <strong>${measuredSpeed} Mbps</strong> alabildiğiniz tespit edildi. İnternetinizin yalnızca %${percent}'sini kullanabiliyorsunuz. Ek olarak hat değerlerinde dalgalanma var.`;
+                                    scriptBoxText.innerHTML = `"Merhaba, internet paketim ${declaredSpeed} Mbps olmasına rağmen hız testlerimde sadece ${measuredSpeed} Mbps alabiliyorum. Sinyal kalitemin (SNR Margin) ve santral bağlantımın kontrol edilmesini talep ediyorum."`;
                                 } else {
-                                    diagnosisText.innerHTML = `Paketinizin <strong>${declaredSpeed} Mbps</strong> olduğunu belirttiniz. Net bir hız yorumu yapabilmem için ana ekrandan "Hız Testini Başlat" butonuna tıklamanız faydalı olur. Şu anki analize göre hattınızda mikro kopmalar tespit edildi.`;
-                                    scriptBoxText.innerHTML = `"Merhaba, internet hattımda ve ping değerlerimde sürekli dalgalanma (jitter) yaşıyorum. Modeme gelen sinyal kalitemin (SNR Margin) ve santral bağlantımın kontrol edilmesini talep ediyorum."`;
+                                    diagnosisText.innerHTML = `Paketinizin <strong>${declaredSpeed} Mbps</strong> olduğunu belirttiniz ve son hız testinize (${measuredSpeed} Mbps) göre hızınız gayet normal. Ancak hat değerlerinizde mikro kopmalar tespit edildi. Sorun kablolama veya santral portunda.`;
+                                    scriptBoxText.innerHTML = `"Merhaba, hızımda bir problem olmamasına rağmen hattımda günde birkaç kez ani mikro kopmalar yaşıyorum. Portumun veya bina içi altyapımın kontrol edilmesini talep ediyorum."`;
                                 }
                             } else {
-                                if (hasTest && measuredSpeed < 20) {
-                                    diagnosisText.innerHTML = `Son hız testinize göre sadece <strong>${measuredSpeed} Mbps</strong> hız alıyorsunuz. Ek olarak hattınızda mikro kopmalar tespit edildi. Hızınız standartların çok altında.`;
+                                if (measuredSpeed < 20) {
+                                    diagnosisText.innerHTML = `Otomatik hız testine göre sadece <strong>${measuredSpeed} Mbps</strong> hız alıyorsunuz. Ek olarak hattınızda mikro kopmalar tespit edildi. Hızınız standartların çok altında.`;
                                     scriptBoxText.innerHTML = `"Merhaba, internet bağlantımda ciddi hız düşüklüğü (${measuredSpeed} Mbps) ve sürekli kopmalar yaşıyorum. Altyapımın ve sinyal değerlerimin incelenmesini talep ediyorum."`;
                                 } else {
-                                    diagnosisText.innerHTML = `Son yarım saatteki değerlere göre hattınızda <strong>mikro kopmalar</strong> ve yüksek ping dalgalanması tespit edildi. Bu durum genellikle bina içi altyapı eskimesi veya port arızasından kaynaklanır.`;
+                                    diagnosisText.innerHTML = `Otomatik hız testiniz başarıyla yapıldı. Değerlerinize göre hattınızda <strong>mikro kopmalar</strong> ve yüksek ping dalgalanması tespit edildi. Bu durum genellikle bina içi altyapı eskimesi veya port arızasından kaynaklanır.`;
                                     scriptBoxText.innerHTML = `"Merhaba, internet hız testimde ve ping değerlerimde sürekli dalgalanma (jitter) yaşıyorum. Modeme gelen sinyal kalitemin (SNR Margin) ve santralden gelen portumun kontrol edilmesini, gerekirse port değişikliği yapılmasını talep ediyorum."`;
                                 }
                             }
-
                         }, 500);
                     }
                     step++;
