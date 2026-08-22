@@ -1477,9 +1477,6 @@
         // Set monitor start time
         dom.monitorStart.textContent = formatDateTime(state.monitorStart);
 
-        // Update clock immediately
-        updateClock();
-
         // Start periodic checks
         checkConnectivity();
         state.checkTimer = setInterval(checkConnectivity, CONFIG.CHECK_INTERVAL);
