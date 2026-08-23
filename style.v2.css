@@ -1463,3 +1463,4 @@ body {
     .app-footer { grid-area: footer; }
 }
   
+@media (max-width: 480px) { .hide-mobile { display: none; } } 
