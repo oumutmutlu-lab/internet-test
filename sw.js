@@ -1,4 +1,4 @@
-const CACHE_NAME = 'internet-test-v31';
+const CACHE_NAME = 'internet-test-v32';
 const ASSETS = [
     './',
     './index.html',

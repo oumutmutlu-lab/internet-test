@@ -1636,6 +1636,49 @@
             });
         }
 
+        // Theme Toggle Logic
+        const btnThemeToggle = document.getElementById('btnThemeToggle');
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            document.body.classList.add('light-theme');
+        }
+        if (btnThemeToggle) {
+            btnThemeToggle.addEventListener('click', () => {
+                document.body.classList.toggle('light-theme');
+                if (document.body.classList.contains('light-theme')) {
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    localStorage.setItem('theme', 'dark');
+                }
+            });
+        }
+
+        // Share Button Logic
+        const btnShare = document.getElementById('btnShare');
+        if (btnShare) {
+            btnShare.addEventListener('click', () => {
+                let speedText = '';
+                const speedElement = document.getElementById('speedDownload');
+                if (speedElement && speedElement.textContent !== '--') {
+                    speedText = ` İnternet hızım: ${speedElement.textContent} Mbps!`;
+                }
+                const pingText = state.latencyHistory.length > 0 ? ` Pingim: ${state.latencyHistory[state.latencyHistory.length-1].latency}ms.` : '';
+                
+                const shareData = {
+                    title: 'internethiz.com Sonucum',
+                    text: `İnternet bağlantı testimi internethiz.com üzerinden yaptım.${speedText}${pingText} Sen de kendi hızını ve kopma geçmişini test et!`,
+                    url: 'https://internethiz.com'
+                };
+
+                if (navigator.share) {
+                    navigator.share(shareData).catch(console.error);
+                } else {
+                    navigator.clipboard.writeText(shareData.text + ' ' + shareData.url);
+                    showToast('Bağlantı kopyalandı!', 'success');
+                }
+            });
+        }
+
         // Start periodic checks
         checkConnectivity();
         state.checkTimer = setInterval(checkConnectivity, CONFIG.CHECK_INTERVAL);
