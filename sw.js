@@ -1,8 +1,8 @@
-const CACHE_NAME = 'internet-test-v38';
+const CACHE_NAME = 'internet-test-v39';
 const ASSETS = [
     './',
     './index.html',
-    './style.css',
+    './style.v2.css',
     './app.js',
     './manifest.json',
     './icon-512.png',
