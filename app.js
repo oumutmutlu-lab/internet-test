@@ -1628,9 +1628,29 @@
                 }, 1000);
             });
 
+            const fallbackCopy = (text) => {
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(text).catch(console.error);
+                } else {
+                    const textArea = document.createElement("textarea");
+                    textArea.value = text;
+                    textArea.style.position = "fixed";
+                    textArea.style.left = "-999999px";
+                    document.body.appendChild(textArea);
+                    textArea.focus();
+                    textArea.select();
+                    try {
+                        document.execCommand('copy');
+                    } catch (err) {
+                        console.error('Kopyalama başarısız', err);
+                    }
+                    textArea.remove();
+                }
+            };
+
             btnCopyScript.addEventListener('click', () => {
                 const scriptText = scriptBoxText.textContent.trim().replace(/"/g, '');
-                navigator.clipboard.writeText(scriptText);
+                fallbackCopy(scriptText);
                 btnCopyScript.textContent = 'Kopyalandı!';
                 setTimeout(() => btnCopyScript.textContent = 'Metni Kopyala', 2000);
             });
@@ -1670,10 +1690,34 @@
                     url: 'https://internethiz.com'
                 };
 
+                const fallbackCopy = (text) => {
+                    if (navigator.clipboard && window.isSecureContext) {
+                        navigator.clipboard.writeText(text).catch(console.error);
+                    } else {
+                        const textArea = document.createElement("textarea");
+                        textArea.value = text;
+                        textArea.style.position = "fixed";
+                        textArea.style.left = "-999999px";
+                        document.body.appendChild(textArea);
+                        textArea.focus();
+                        textArea.select();
+                        try {
+                            document.execCommand('copy');
+                        } catch (err) {
+                            console.error('Kopyalama başarısız', err);
+                        }
+                        textArea.remove();
+                    }
+                };
+
                 if (navigator.share) {
-                    navigator.share(shareData).catch(console.error);
+                    navigator.share(shareData).catch((err) => {
+                        console.error('Share failed', err);
+                        fallbackCopy(shareData.text + ' ' + shareData.url);
+                        showToast('Bağlantı kopyalandı!', 'success');
+                    });
                 } else {
-                    navigator.clipboard.writeText(shareData.text + ' ' + shareData.url);
+                    fallbackCopy(shareData.text + ' ' + shareData.url);
                     showToast('Bağlantı kopyalandı!', 'success');
                 }
             });
