@@ -194,3 +194,4 @@
         font-size: 1.8rem;
     }
 }
+.blog-container { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 24px 20px 40px; padding-top: calc(24px + env(safe-area-inset-top)); padding-bottom: calc(40px + env(safe-area-inset-bottom)); padding-left: calc(20px + env(safe-area-inset-left)); padding-right: calc(20px + env(safe-area-inset-right)); -webkit-tap-highlight-color: transparent; } @media (max-width: 768px) { .blog-container { padding: 16px 12px 32px; } } 
