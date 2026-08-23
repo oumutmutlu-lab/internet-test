@@ -1405,6 +1405,7 @@
                 lastOffline: state.lastOffline ? state.lastOffline.getTime() : null,
                 lastOnline: state.lastOnline ? state.lastOnline.getTime() : null,
                 isOnline: state.isOnline,
+                statusSince: state.statusSince ? state.statusSince.getTime() : null,
                 lastSaved: Date.now(),
             };
             localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(data));
@@ -1443,6 +1444,7 @@
             state.lastOffline = data.lastOffline ? new Date(data.lastOffline) : null;
             state.lastOnline = data.lastOnline ? new Date(data.lastOnline) : null;
             state.isOnline = data.isOnline !== undefined ? data.isOnline : null;
+            state.statusSince = data.statusSince ? new Date(data.statusSince) : new Date();
 
             state.latencyHistory = (data.latencyHistory || []).map(l => ({
                 time: new Date(l.time),
