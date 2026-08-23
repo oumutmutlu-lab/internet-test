@@ -1444,7 +1444,8 @@ body {
             "speed assistant"
             "chart assistant"
             "chart diag"
-            "timeline logs"
+            "logs logs"
+            "guides guides"
             "faq faq"
             "footer footer";
         gap: 0 24px;
@@ -1454,11 +1455,11 @@ body {
     #statusCard { grid-area: status; }
     .speed-test-section { grid-area: speed; height: 100%; }
     .chart-section { grid-area: chart; }
-    .timeline-section { grid-area: timeline; }
     .assistant-cta { grid-area: assistant; margin-top: 0; }
     #diagSection { grid-area: diag; }
     .log-section { grid-area: logs; }
     .seo-faq-section { grid-area: faq; margin-top: 24px; }
+    .seo-guides-section { grid-area: guides; margin-top: 24px; }
     .app-footer { grid-area: footer; }
 }
   
