@@ -1673,53 +1673,81 @@
             });
         }
 
-        // Share Button Logic
+        // Share Button & Modal Logic
         const btnShare = document.getElementById('btnShare');
-        if (btnShare) {
+        const shareModal = document.getElementById('shareModal');
+        const btnCloseShare = document.getElementById('btnCloseShare');
+        const btnShareWhatsApp = document.getElementById('btnShareWhatsApp');
+        const btnShareTwitter = document.getElementById('btnShareTwitter');
+        const btnShareTelegram = document.getElementById('btnShareTelegram');
+        const btnShareCopy = document.getElementById('btnShareCopy');
+
+        const fallbackCopy = (text) => {
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).catch(console.error);
+            } else {
+                const textArea = document.createElement("textarea");
+                textArea.value = text;
+                textArea.style.position = "fixed";
+                textArea.style.left = "-999999px";
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                } catch (err) {
+                    console.error('Kopyalama başarısız', err);
+                }
+                textArea.remove();
+            }
+        };
+
+        const getShareText = () => {
+            let speedText = '';
+            const speedElement = document.getElementById('speedDownload');
+            if (speedElement && speedElement.textContent !== '--') {
+                speedText = ` İnternet hızım: ${speedElement.textContent} Mbps!`;
+            }
+            const pingText = state.latencyHistory.length > 0 ? ` Pingim: ${state.latencyHistory[state.latencyHistory.length-1].latency}ms.` : '';
+            return `İnternet bağlantı testimi internethiz.com üzerinden yaptım.${speedText}${pingText} Sen de kendi hızını test et! https://internethiz.com`;
+        };
+
+        if (btnShare && shareModal) {
             btnShare.addEventListener('click', () => {
-                let speedText = '';
-                const speedElement = document.getElementById('speedDownload');
-                if (speedElement && speedElement.textContent !== '--') {
-                    speedText = ` İnternet hızım: ${speedElement.textContent} Mbps!`;
-                }
-                const pingText = state.latencyHistory.length > 0 ? ` Pingim: ${state.latencyHistory[state.latencyHistory.length-1].latency}ms.` : '';
-                
-                const shareData = {
-                    title: 'internethiz.com Sonucum',
-                    text: `İnternet bağlantı testimi internethiz.com üzerinden yaptım.${speedText}${pingText} Sen de kendi hızını ve kopma geçmişini test et!`,
-                    url: 'https://internethiz.com'
-                };
-
-                const fallbackCopy = (text) => {
-                    if (navigator.clipboard && window.isSecureContext) {
-                        navigator.clipboard.writeText(text).catch(console.error);
-                    } else {
-                        const textArea = document.createElement("textarea");
-                        textArea.value = text;
-                        textArea.style.position = "fixed";
-                        textArea.style.left = "-999999px";
-                        document.body.appendChild(textArea);
-                        textArea.focus();
-                        textArea.select();
-                        try {
-                            document.execCommand('copy');
-                        } catch (err) {
-                            console.error('Kopyalama başarısız', err);
-                        }
-                        textArea.remove();
-                    }
-                };
-
-                if (navigator.share) {
-                    navigator.share(shareData).catch((err) => {
-                        console.error('Share failed', err);
-                        fallbackCopy(shareData.text + ' ' + shareData.url);
-                        showToast('Bağlantı kopyalandı!', 'success');
-                    });
+                // If on a mobile device that supports native share, use it directly
+                if (navigator.share && /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                    navigator.share({
+                        title: 'internethiz.com',
+                        text: getShareText()
+                    }).catch(console.error);
                 } else {
-                    fallbackCopy(shareData.text + ' ' + shareData.url);
-                    showToast('Bağlantı kopyalandı!', 'success');
+                    // Show custom modal
+                    shareModal.classList.remove('hidden');
                 }
+            });
+
+            btnCloseShare.addEventListener('click', () => {
+                shareModal.classList.add('hidden');
+            });
+
+            btnShareWhatsApp.addEventListener('click', () => {
+                window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(getShareText())}`, '_blank');
+            });
+
+            btnShareTwitter.addEventListener('click', () => {
+                window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(getShareText())}`, '_blank');
+            });
+
+            btnShareTelegram.addEventListener('click', () => {
+                window.open(`https://t.me/share/url?url=https://internethiz.com&text=${encodeURIComponent(getShareText())}`, '_blank');
+            });
+
+            btnShareCopy.addEventListener('click', () => {
+                fallbackCopy(getShareText());
+                btnShareCopy.textContent = 'Kopyalandı!';
+                setTimeout(() => {
+                    btnShareCopy.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> Bağlantıyı Kopyala';
+                }, 2000);
             });
         }
 

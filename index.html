@@ -468,6 +468,35 @@
         <footer class="app-footer">
             <p>İzleme başlangıcı: <span id="monitorStart">--</span> | Kontrol aralığı: <span id="checkInterval">3 saniye</span></p>
         </footer>
+
+        <!-- Share Modal -->
+        <div class="modal-overlay hidden" id="shareModal" style="z-index: 10000;">
+            <div class="modal-content" style="max-width: 400px; padding-bottom: 8px;">
+                <div class="modal-header">
+                    <h2>Sonucu Paylaş</h2>
+                    <button class="btn-close-modal" id="btnCloseShare">&times;</button>
+                </div>
+                <div class="modal-body" style="display: flex; flex-direction: column; gap: 12px; padding: 24px;">
+                    <p style="margin-top: 0; margin-bottom: 8px; color: var(--text-secondary); font-size: 0.9rem;">Hız testi ve ping sonuçlarınızı tek tıkla paylaşın:</p>
+                    <button id="btnShareWhatsApp" class="btn-share-social" style="background: #25D366; color: white; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 0C5.396 0 .012 5.378.012 12.002c0 2.125.553 4.2 1.605 6.03L.004 24l6.105-1.597c1.766.953 3.75 1.455 5.922 1.455 6.634 0 12.02-5.38 12.02-12.003S18.666 0 12.031 0zm0 21.844c-1.802 0-3.567-.482-5.114-1.396l-.367-.217-3.805.996 1.018-3.704-.239-.379c-1.003-1.589-1.533-3.425-1.533-5.312 0-5.518 4.493-10.005 10.04-10.005 5.545 0 10.038 4.487 10.038 10.005 0 5.52-4.493 10.007-10.038 10.007zm5.503-7.514c-.302-.151-1.785-.881-2.062-.982-.276-.101-.477-.151-.679.151-.201.302-.779.982-.955 1.183-.176.201-.352.226-.653.075-2.067-1.034-3.541-2.457-4.402-4.341-.125-.276.126-.251.424-.848.075-.151.038-.276-.019-.427-.057-.151-.679-1.635-.93-2.238-.246-.589-.494-.509-.679-.518-.176-.008-.377-.008-.578-.008-.201 0-.528.075-.804.377-.276.302-1.055 1.03-1.055 2.512 0 1.482 1.08 2.914 1.231 3.115.151.201 2.126 3.24 5.148 4.542 2.051.884 2.871.933 3.874.783 1.003-.151 3.242-1.321 3.693-2.597.452-1.276.452-2.373.315-2.597-.138-.224-.516-.35-.818-.501z"/></svg>
+                        WhatsApp
+                    </button>
+                    <button id="btnShareTwitter" class="btn-share-social" style="background: #14171A; color: white; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.007 4.126H5.078z"/></svg>
+                        X (Twitter)
+                    </button>
+                    <button id="btnShareTelegram" class="btn-share-social" style="background: #24A1DE; color: white; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.888-.662 3.473-1.512 5.792-2.511 6.958-2.997 3.31-1.383 3.998-1.621 4.444-1.629z"/></svg>
+                        Telegram
+                    </button>
+                    <button id="btnShareCopy" class="btn-share-social" style="background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        Bağlantıyı Kopyala
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Audio notification -->
@@ -488,6 +517,6 @@
         });
     }
     </script>
-    <script src="app.js?v=32"></script>
+    <script src="app.js?v=33"></script>
 </body>
 </html>
