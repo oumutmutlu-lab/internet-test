@@ -1405,6 +1405,9 @@ body {
     .btn-assistant { margin: 16px 0 0 0; width: 100%; }
 }
 
+.hidden { display: none !important; }
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
 /* ========================================
    Desktop Dashboard Layout (Grid)
    ======================================== */
