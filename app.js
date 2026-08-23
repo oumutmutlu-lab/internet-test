@@ -1493,8 +1493,10 @@
             }
         }
 
-        // Set monitor start time
-        dom.monitorStart.textContent = formatDateTime(state.monitorStart);
+        // Set monitor start time if element exists
+        if (dom.monitorStart) {
+            dom.monitorStart.textContent = formatDateTime(state.monitorStart);
+        }
 
         // Setup FAQ Accordion
         const faqQuestions = document.querySelectorAll('.faq-question');
@@ -1628,7 +1630,9 @@
         setupBrowserEvents();
 
         // Clear button
-        dom.btnClear.addEventListener('click', clearHistory);
+        if (dom.btnClear) {
+            dom.btnClear.addEventListener('click', clearHistory);
+        }
         if (dom.btnClearLog) {
             dom.btnClearLog.addEventListener('click', clearHistory);
         }
