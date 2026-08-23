@@ -288,22 +288,48 @@
             </div>
         </section>
 
-        <!-- Connection Timeline -->
-        <section class="timeline-section">
-            <div class="section-header">
-                <h3 class="section-title">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"/>
-                        <polyline points="12 6 12 12 16 14"/>
-                    </svg>
-                    Bağlantı Zaman Çizelgesi
-                </h3>
-            </div>
-            <div class="timeline-bar-container">
-                <div class="timeline-bar" id="timelineBar"></div>
-                <div class="timeline-labels">
-                    <span id="timelineStart">--:--</span>
-                    <span id="timelineEnd">--:--</span>
+        <!-- Game Guides Section (SEO) -->
+        <section class="seo-faq-section" style="margin-top: 24px;">
+            <h2 style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-purple);">
+                    <rect x="2" y="6" width="20" height="12" rx="2" ry="2"></rect>
+                    <path d="M6 12h4"></path>
+                    <path d="M8 10v4"></path>
+                    <line x1="15" y1="13" x2="15.01" y2="13"></line>
+                    <line x1="18" y1="11" x2="18.01" y2="11"></line>
+                </svg>
+                Oyunlara Özel Ping Düşürme Rehberleri
+            </h2>
+            <div class="faq-list">
+                <div class="faq-item">
+                    <button class="faq-question">🎮 Call of Duty: Warzone Ping Düşürme (2024) <span class="faq-icon">+</span></button>
+                    <div class="faq-answer">
+                        <p>Warzone'da anlık ping fırlaması yaşıyorsanız, sorun genellikle Activision sunucularına bağlanan rotasyonunuzdur (Routing). Çözüm için: 1) Cihazınızı Wi-Fi yerine kesinlikle <strong>CAT6 Ethernet kablosu</strong> ile bağlayın. 2) Yönlendiricinizde (Router) QoS ayarlarını açıp oyun konsolunuza öncelik tanıyın. 3) Oyuna girmeden önce arka plandaki tüm indirmeleri durdurun. Özellikle Crossplay açıkken farklı kıtalardaki oyuncularla eşleştiğinizde ping yüksek çıkabilir, daha lokal sunucularda eşleşmeye çalışın.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">🔫 Valorant Yüksek Ping ve Lag Çözümü <span class="faq-icon">+</span></button>
+                    <div class="faq-answer">
+                        <p>Valorant'ın "Riot Direct" ağı oldukça hassastır. Jitter (dalgalanma) veya ani takılmalar yaşıyorsanız: 1) CMD'yi yönetici olarak açıp <code>ipconfig /flushdns</code> yazarak DNS önbelleğinizi temizleyin. 2) Google DNS (8.8.8.8) veya Cloudflare DNS (1.1.1.1) kullanarak Riot sunucularına daha kısa bir rota çizmeyi deneyin. 3) Discord veya Spotify gibi uygulamalarda "Donanım İvmelendirmesi"ni kapatın. Bu adım mikro lagları (gecikmeleri) büyük ölçüde çözecektir.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">🎯 CS2 Gecikme ve Dalgalanma Engelleme <span class="faq-icon">+</span></button>
+                    <div class="faq-answer">
+                        <p>CS2'de yeni "Sub-Tick" sistemi nedeniyle düşük ping her zamankinden daha önemlidir. 1) Ayarlardan "Maksimum Kabul Edilebilir Eşleştirme Pingi" değerini <strong>40-50 ms</strong> arasına çekin, böylece sizi uzak sunuculara atmasını engelleyin. 2) Eğer ping ölçümümüzde Jitter (dalgalanma) sorununuz çıktığını görüyorsanız, Arıza Asistanımızı kullanarak santral ve port sağlığınızı test edin.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">🧙‍♂️ League of Legends MS Düşürme Taktikleri <span class="faq-icon">+</span></button>
+                    <div class="faq-answer">
+                        <p>LoL'de MS'inizin düşük görünmesine rağmen karakterin geç tepki vermesi bir "Packet Loss" (Paket Kaybı) veya Bufferbloat sorunudur. Evdeki diğer cihazların ağınızı (Netflix vb.) meşgul etmesi tıkanıklık (bufferbloat) yaratır, bu durumlarda anlık ping ve Jitter metrikleriniz tavan yapar. Modeminizi 5Ghz moduna almak veya kablolu bağlanmak ani MS artışlarını durduracaktır.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">⚽ EA FC 24 (FIFA) Gecikme Sorunu Çözümü <span class="faq-icon">+</span></button>
+                    <div class="faq-answer">
+                        <p>EA FC 24 (FIFA) özellikle hafta sonları Champions liginde devasa bir lag hissettirir. Bunu minimize etmek sizin elinizdedir: 1) Televizyon/Monitörünüzün "Oyun Modu" (Game Mode) açık olduğundan emin olun, aksi halde maçlarda ağırlık hissedersiniz. 2) Modeminizin "Port Yönlendirme" bölümünden EA FC 24 portlarını açmak bağlantınızın direkt olmasını (Nat Type 1/Open) sağlayarak maçlarda takılmaları önler.</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -408,52 +434,6 @@
                     <button class="faq-question">İnternetim Neden Yavaş veya Sürekli Kopuyor? <span class="faq-icon">+</span></button>
                     <div class="faq-answer">
                         <p>Bunun birçok nedeni olabilir. Modeminizin aşırı ısınması, Wi-Fi kanal çakışmaları, bina içi ankastre kablolarınızdaki oksitlenme veya altyapı sağlayıcınızın (Servis Sağlayıcı) santralindeki bir sorun buna yol açabilir. <strong>Arıza Asistanı</strong> aracımızı kullanarak problemin kaynağını tam olarak tespit edebilir ve müşteri hizmetlerine ne söylemeniz gerektiğini öğrenebilirsiniz.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Game Guides Section (SEO) -->
-        <section class="seo-faq-section" style="margin-top: 24px;">
-            <h2 style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-purple);">
-                    <rect x="2" y="6" width="20" height="12" rx="2" ry="2"></rect>
-                    <path d="M6 12h4"></path>
-                    <path d="M8 10v4"></path>
-                    <line x1="15" y1="13" x2="15.01" y2="13"></line>
-                    <line x1="18" y1="11" x2="18.01" y2="11"></line>
-                </svg>
-                Oyunlara Özel Ping Düşürme Rehberleri
-            </h2>
-            <div class="faq-list">
-                <div class="faq-item">
-                    <button class="faq-question">🎮 Call of Duty: Warzone Ping Düşürme (2024) <span class="faq-icon">+</span></button>
-                    <div class="faq-answer">
-                        <p>Warzone'da anlık ping fırlaması yaşıyorsanız, sorun genellikle Activision sunucularına bağlanan rotasyonunuzdur (Routing). Çözüm için: 1) Cihazınızı Wi-Fi yerine kesinlikle <strong>CAT6 Ethernet kablosu</strong> ile bağlayın. 2) Yönlendiricinizde (Router) QoS ayarlarını açıp oyun konsolunuza öncelik tanıyın. 3) Oyuna girmeden önce arka plandaki tüm indirmeleri durdurun. Özellikle Crossplay açıkken farklı kıtalardaki oyuncularla eşleştiğinizde ping yüksek çıkabilir, daha lokal sunucularda eşleşmeye çalışın.</p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-question">🔫 Valorant Yüksek Ping ve Lag Çözümü <span class="faq-icon">+</span></button>
-                    <div class="faq-answer">
-                        <p>Valorant'ın "Riot Direct" ağı oldukça hassastır. Jitter (dalgalanma) veya ani takılmalar yaşıyorsanız: 1) CMD'yi yönetici olarak açıp <code>ipconfig /flushdns</code> yazarak DNS önbelleğinizi temizleyin. 2) Google DNS (8.8.8.8) veya Cloudflare DNS (1.1.1.1) kullanarak Riot sunucularına daha kısa bir rota çizmeyi deneyin. 3) Discord veya Spotify gibi uygulamalarda "Donanım İvmelendirmesi"ni kapatın. Bu adım mikro lagları (gecikmeleri) büyük ölçüde çözecektir.</p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-question">🎯 CS2 Gecikme ve Dalgalanma Engelleme <span class="faq-icon">+</span></button>
-                    <div class="faq-answer">
-                        <p>CS2'de yeni "Sub-Tick" sistemi nedeniyle düşük ping her zamankinden daha önemlidir. 1) Ayarlardan "Maksimum Kabul Edilebilir Eşleştirme Pingi" değerini <strong>40-50 ms</strong> arasına çekin, böylece sizi uzak sunuculara atmasını engelleyin. 2) Eğer ping ölçümümüzde Jitter (dalgalanma) sorununuz çıktığını görüyorsanız, Arıza Asistanımızı kullanarak santral ve port sağlığınızı test edin.</p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-question">🧙‍♂️ League of Legends MS Düşürme Taktikleri <span class="faq-icon">+</span></button>
-                    <div class="faq-answer">
-                        <p>LoL'de MS'inizin düşük görünmesine rağmen karakterin geç tepki vermesi bir "Packet Loss" (Paket Kaybı) veya Bufferbloat sorunudur. Evdeki diğer cihazların ağınızı (Netflix vb.) meşgul etmesi tıkanıklık (bufferbloat) yaratır, bu durumlarda anlık ping ve Jitter metrikleriniz tavan yapar. Modeminizi 5Ghz moduna almak veya kablolu bağlanmak ani MS artışlarını durduracaktır.</p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-question">⚽ EA FC 24 (FIFA) Gecikme Sorunu Çözümü <span class="faq-icon">+</span></button>
-                    <div class="faq-answer">
-                        <p>EA FC 24 (FIFA) özellikle hafta sonları Champions liginde devasa bir lag hissettirir. Bunu minimize etmek sizin elinizdedir: 1) Televizyon/Monitörünüzün "Oyun Modu" (Game Mode) açık olduğundan emin olun, aksi halde maçlarda ağırlık hissedersiniz. 2) Modeminizin "Port Yönlendirme" bölümünden EA FC 24 portlarını açmak bağlantınızın direkt olmasını (Nat Type 1/Open) sağlayarak maçlarda takılmaları önler.</p>
                     </div>
                 </div>
             </div>

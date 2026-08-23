@@ -516,6 +516,7 @@
     }
 
     function updateTimelineUI() {
+        if (!dom.timelineBar) return;
         const now = Date.now();
         const start = now - CONFIG.TIMELINE_DURATION;
 
