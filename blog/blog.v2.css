@@ -56,7 +56,7 @@
 }
 
 .blog-card-image {
-    height: 160px;
+    height: 240px;
     display: flex;
     align-items: flex-start;
     justify-content: flex-end;
