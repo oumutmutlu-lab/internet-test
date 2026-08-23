@@ -35,7 +35,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=33">
+    <link rel="stylesheet" href="style.css?v=34">
 </head>
 <body>
     <div class="app-container">
@@ -130,10 +130,22 @@
                 </div>
                 <div class="stat-content">
                     <span class="stat-value" id="latencyValue">-- ms</span>
-                    <span class="stat-label">Gecikme (Ping)</span>
+                    <span class="stat-label">Anlık Gecikme</span>
                 </div>
                 <div class="stat-bar">
                     <div class="stat-bar-fill latency-bar" id="latencyBar"></div>
+                </div>
+            </div>
+
+            <div class="stat-card" id="statAvgJitter">
+                <div class="stat-icon" style="background: var(--accent-amber-glow); color: var(--accent-amber);">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12h-4l-2 8-4-16-2 8H3"/>
+                    </svg>
+                </div>
+                <div class="stat-content">
+                    <span class="stat-value" id="avgJitter">-- ms</span>
+                    <span class="stat-label">Dalgalanma (Jitter)</span>
                 </div>
             </div>
 
@@ -162,45 +174,24 @@
                 </div>
                 <div class="stat-content">
                     <span class="stat-value" id="totalDowntime">00:00:00</span>
-                    <span class="stat-label">Toplam Kesinti Süresi</span>
-                </div>
-            </div>
-
-            <div class="stat-card" id="statAvgLatency">
-                <div class="stat-icon avg-icon">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-                    </svg>
-                </div>
-                <div class="stat-content">
-                    <span class="stat-value" id="avgLatency">-- ms</span>
-                    <span class="stat-label">Ortalama Gecikme</span>
-                </div>
-            </div>
-
-            <div class="stat-card" id="statAvgJitter">
-                <div class="stat-icon" style="background: var(--accent-amber-glow); color: var(--accent-amber);">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 12h-4l-2 8-4-16-2 8H3"/>
-                    </svg>
-                </div>
-                <div class="stat-content">
-                    <span class="stat-value" id="avgJitter">-- ms</span>
-                    <span class="stat-label">Ortalama Dalgalanma</span>
+                    <span class="stat-label">Kesinti Süresi</span>
                 </div>
             </div>
         </section>
 
         <!-- Latency Chart -->
         <section class="chart-section">
-            <div class="section-header">
+            <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
                 <h3 class="section-title">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
                     </svg>
-                    Gecikme Grafiği
+                    Gecikme Grafiği (Ping)
                 </h3>
-                <span class="section-badge" id="chartInterval">Son 60 ölçüm</span>
+                <div style="display: flex; gap: 8px;">
+                    <span class="section-badge" id="chartInterval">Son 60 ölçüm</span>
+                    <span class="section-badge" style="background: rgba(59, 130, 246, 0.1); color: var(--accent-blue); border: 1px solid rgba(59, 130, 246, 0.3);">Ortalama: <strong id="avgLatency">-- ms</strong></span>
+                </div>
             </div>
             <div class="chart-container">
                 <canvas id="latencyChart"></canvas>
@@ -529,6 +520,6 @@
         });
     }
     </script>
-    <script src="app.js?v=34"></script>
+    <script src="app.js?v=35"></script>
 </body>
 </html>
