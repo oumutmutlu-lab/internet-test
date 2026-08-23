@@ -35,7 +35,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=32">
+    <link rel="stylesheet" href="style.css?v=33">
 </head>
 <body>
     <div class="app-container">
@@ -175,6 +175,18 @@
                 <div class="stat-content">
                     <span class="stat-value" id="avgLatency">-- ms</span>
                     <span class="stat-label">Ortalama Gecikme</span>
+                </div>
+            </div>
+
+            <div class="stat-card" id="statAvgJitter">
+                <div class="stat-icon" style="background: var(--accent-amber-glow); color: var(--accent-amber);">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12h-4l-2 8-4-16-2 8H3"/>
+                    </svg>
+                </div>
+                <div class="stat-content">
+                    <span class="stat-value" id="avgJitter">-- ms</span>
+                    <span class="stat-label">Ortalama Dalgalanma</span>
                 </div>
             </div>
         </section>
@@ -517,6 +529,6 @@
         });
     }
     </script>
-    <script src="app.js?v=33"></script>
+    <script src="app.js?v=34"></script>
 </body>
 </html>

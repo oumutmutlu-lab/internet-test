@@ -76,6 +76,7 @@
         totalDowntime: document.getElementById('totalDowntime'),
         headerRight: document.querySelector('.header-right'),
         avgLatency: document.getElementById('avgLatency'),
+        avgJitter: document.getElementById('avgJitter'),
         chartOverlay: document.getElementById('chartOverlay'),
         latencyChart: document.getElementById('latencyChart'),
         timelineBar: document.getElementById('timelineBar'),
@@ -473,6 +474,17 @@
                 state.allLatencies.reduce((a, b) => a + b, 0) / state.allLatencies.length
             );
             dom.avgLatency.textContent = avg + ' ms';
+
+            if (state.allLatencies.length > 1) {
+                let jitterSum = 0;
+                for (let i = 1; i < state.allLatencies.length; i++) {
+                    jitterSum += Math.abs(state.allLatencies[i] - state.allLatencies[i-1]);
+                }
+                const avgJit = Math.round(jitterSum / (state.allLatencies.length - 1));
+                if (dom.avgJitter) dom.avgJitter.textContent = avgJit + ' ms';
+            } else {
+                if (dom.avgJitter) dom.avgJitter.textContent = '0 ms';
+            }
         }
 
         dom.eventCount.textContent = state.events.length + ' olay';
@@ -1387,6 +1399,7 @@
 
         dom.monitorStart.textContent = formatDateTime(state.monitorStart);
         dom.avgLatency.textContent = '-- ms';
+        if (dom.avgJitter) dom.avgJitter.textContent = '-- ms';
 
         // Clear saved data
         try { localStorage.removeItem(CONFIG.STORAGE_KEY); } catch (e) {}
