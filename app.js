@@ -6,6 +6,19 @@
 (function () {
     'use strict';
 
+    // Global error handler for debugging
+    window.addEventListener('error', function(e) {
+        console.error('Global Error:', e.message, 'at', e.filename, e.lineno, e.colno);
+        const div = document.createElement('div');
+        div.style.cssText = 'position:fixed; top:0; left:0; width:100%; background:red; color:white; padding:10px; z-index:9999; font-size:12px; font-family:monospace;';
+        div.textContent = `Hata: ${e.message} (Satır: ${e.lineno})`;
+        document.body.appendChild(div);
+    });
+
+    window.addEventListener('unhandledrejection', function(e) {
+        console.error('Unhandled Promise Rejection:', e.reason);
+    });
+
     // ========================================
     // Configuration
     // ========================================
