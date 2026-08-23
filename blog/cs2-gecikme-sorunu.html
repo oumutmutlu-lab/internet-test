@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CS2 Sub-Tick Sistemi ve Gecikme (Ping) Ayarları - internethiz.com</title>
+    <meta name="description" content="Counter-Strike 2 (CS2) yeni Sub-Tick sisteminde düşük ping neden hayati önem taşır? Gecikme önleme ve ağ ayarları rehberi.">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style.v2.css">
+    <link rel="stylesheet" href="blog.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header" style="position: relative; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1.5rem 1rem;">
+            
+            <div style="position: absolute; top: 1.5rem; left: 1.5rem;">
+                <a href="index.html" class="btn-back">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    <span>Rehberlere Dön</span>
+                </a>
+            </div>
+
+            <div class="logo-icon" style="background: none; padding: 0; margin-bottom: 12px;">
+                <img src="../logo.jpg" alt="internethiz.com Logo" style="width: 64px; height: 64px; border-radius: 16px; object-fit: cover; box-shadow: 0 0 15px rgba(0, 242, 254, 0.4); border: 2px solid rgba(255, 255, 255, 0.1);">
+            </div>
+            <div>
+                <span class="app-title" style="font-size: 1.6rem; letter-spacing: -0.5px; background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;">internethiz.com Blog</span>
+            </div>
+        </header>
+
+        <!-- Article Header -->
+        <div class="article-header">
+            <span class="article-category">CS2</span>
+            <h1 class="article-title">CS2 Sub-Tick Sistemi ve Gecikme (Ping) Ayarları</h1>
+            <div class="article-meta">
+                Yayınlanma: 24 Ağustos 2026 &bull; Okuma Süresi: 4 Dakika
+            </div>
+        </div>
+
+        <!-- Article Content -->
+        <article class="article-content">
+            <p>Valve, Counter-Strike 2 (CS2) ile birlikte yılların CS:GO efsanesi olan "Tickrate" altyapısını çöpe atıp yerine <strong>Sub-Tick</strong> adını verdiği yeni bir mimari getirdi. Bu yeni sistemin amacı mermilerin tam olarak tıkladığınız milisaniyede gitmesini sağlamaktı. Ancak bu durum, internet bağlantısı kusursuz olmayan oyuncular için pingi eskisinden çok daha kritik bir hale getirdi.</p>
+
+            <h2>Sub-Tick Neden Düşük Ping İster?</h2>
+            <p>Eski sistemde sunucu her şeyi 64 eşit parçaya bölerek (64 Tick) hesaplıyordu. Yeni Sub-Tick sisteminde ise sunucu, sizin mouse'a tıkladığınız "zaman damgasını" (timestamp) sunucuya iletir. Eğer pinginiz yüksekse, sizin tıkladığınız bilginin sunucuya gitmesi gecikir, sunucu geçmişteki o anı işlerken rakibiniz çoktan pozisyon değiştirmiş olabilir. Bu da CS2'de meşhur "duvar arkasında vurulma" (Peeker's Advantage) sendromuna yol açar.</p>
+
+            <h2>1. Maksimum Kabul Edilebilir Eşleştirme Pingi Ayarı</h2>
+            <p>CS2'de yapmanız gereken en hayati ayar budur. Oyunu ilk kurduğunuzda bu değer 150 ms gibi çok yüksek bir rakamda olabilir. Bu da oyunun sizi maç bulsun diye Rusya'nın en uzak sunucularına atmasına sebep olur.</p>
+            <div class="highlight-box">
+                <strong>Nasıl Yapılır:</strong> Oyun İçi Ayarlar > Oyun Sekmesi > "Maksimum Kabul Edilebilir Eşleştirme Pingi" değerini <strong>40-50 ms</strong> aralığına çekin. Gerekirse maç bulması 2 dakika fazla sürer ama her zaman en sağlıklı sunucuya atanırsınız.
+            </div>
+
+            <h2>2. Gecikme Telefisiz (Lag Compensation) Oynama</h2>
+            <p>Eğer Wi-Fi kullanıyorsanız CS2 oynamanız adeta bir çileye dönüşecektir. Sub-tick sistemi paket kayıplarına (packet loss) karşı aşırı hassastır. Odanız ne kadar uzak olursa olsun, gerekirse duvar kenarlarından kablo çekerek mutlaka <a href="cat6-vs-cat7-oyun.html" style="color: var(--accent-blue);">CAT6 Ethernet Kablosu</a> ile bağlanın.</p>
+
+            <h2>3. NVIDIA Reflex Düşük Gecikme (Low Latency)</h2>
+            <p>Sadece internet pingi değil, bilgisayarınızın donanım gecikmesi de Sub-Tick için önemlidir. Ekran kartınız NVIDIA ise, CS2 Görüntü Ayarları menüsüne girip <strong>NVIDIA Reflex Low Latency</strong> ayarını <strong>Açık + Takviye (On + Boost)</strong> konumuna getirin. Bu, mouse tıklamanızın işlemciden geçip internete yollanma süresini (Input Lag) minimuma indirecektir.</p>
+
+            <h2>4. Arka Plan Bant Genişliği Kısıtlaması</h2>
+            <p>Steam arka planda Workshop (Atölye) haritalarını veya başka oyunları güncellerken CS2'ye girerseniz pinginiz tavan yapar. Steam Ayarları > İndirmeler bölümünden <strong>Oyun Oynarken İndirmelere İzin Ver</strong> seçeneğinin kapalı olduğundan kesinlikle emin olun.</p>
+
+        </article>
+
+        <!-- Footer -->
+        <footer class="app-footer" style="margin-top: 48px;">
+            <p>&copy; 2026 internethiz.com | Tüm Hakları Saklıdır</p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apex Legends Packet Loss ve Sunucu Gecikmesi Çözümleri - internethiz.com</title>
+    <meta name="description" content="Apex Legends'ta kırmızı ikonlar, yüksek ping, packet loss ve EA sunucu kopmaları yaşıyorsanız uygulamanız gereken kesin ağ ayarları.">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style.v2.css">
+    <link rel="stylesheet" href="blog.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header" style="position: relative; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1.5rem 1rem;">
+            
+            <div style="position: absolute; top: 1.5rem; left: 1.5rem;">
+                <a href="index.html" class="btn-back">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    <span>Rehberlere Dön</span>
+                </a>
+            </div>
+
+            <div class="logo-icon" style="background: none; padding: 0; margin-bottom: 12px;">
+                <img src="../logo.jpg" alt="internethiz.com Logo" style="width: 64px; height: 64px; border-radius: 16px; object-fit: cover; box-shadow: 0 0 15px rgba(0, 242, 254, 0.4); border: 2px solid rgba(255, 255, 255, 0.1);">
+            </div>
+            <div>
+                <span class="app-title" style="font-size: 1.6rem; letter-spacing: -0.5px; background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;">internethiz.com Blog</span>
+            </div>
+        </header>
+
+        <!-- Article Header -->
+        <div class="article-header">
+            <span class="article-category">Apex Legends</span>
+            <h1 class="article-title">Apex Legends Packet Loss ve Sunucu Sorunları Çözümü</h1>
+            <div class="article-meta">
+                Yayınlanma: 24 Ağustos 2026 &bull; Okuma Süresi: 4 Dakika
+            </div>
+        </div>
+
+        <!-- Article Content -->
+        <article class="article-content">
+            <p>Battle Royale türünün en hızlı ve mekanik odaklı oyunu Apex Legends'ta, ekranın sağ üst köşesinde beliren o meşhur <strong>Kırmızı Hata İkonları (Packet Loss, UCMD Delay, Prediction Error)</strong> her oyuncunun korkulu rüyasıdır. EA sunucularının (Multiplay) meşhur 20Hz Tickrate altyapısı zaten yeterince ağırken, bir de sizin bağlantınızda ufak bir sorun varsa oyun tamamen oynanamaz hale gelir.</p>
+
+            <p>Bu kırmızı ikonlardan kurtulmak ve gecikmeyi minimuma indirmek için şu adımları izleyin.</p>
+
+            <h2>1. Sunucu (Data Center) Seçimini Manuel Yapın</h2>
+            <p>Oyun sizi çoğu zaman pingi en düşük görünen sunucuya atar ancak o sunucuda "Packet Loss" (Paket Kaybı) olabilir. Ana ekranda (Lobiye girmeden önce) "Data Center" menüsünü açın.</p>
+            <div class="highlight-box">
+                <strong>İpucu:</strong> Sadece Ping'e değil, yanında yazan "Packet Loss" yüzdesine de bakın. Pingi 40 ms ve Packet Loss'u %0 olan bir Frankfurt sunucusu, Pingi 30 ms ama Packet Loss'u %2 olan bir sunucudan <strong>çok daha akıcı</strong> bir deneyim sunar. Daima %0 Packet Loss olanı seçin.
+            </div>
+
+            <h2>2. Arka Plandaki EA App / Origin Hizmetlerini Sınırlandırın</h2>
+            <p>Eğer oyunu EA App üzerinden oynuyorsanız, uygulamanın arka plan veri toplama servisleri (In-Game Overlay) anlık ping fırlamalarına sebep olabilir. Uygulama ayarlarına girerek "Application Updates", "In-Game Overlay" ve veri paylaşım (Telemetry) özelliklerinin tümünü devre dışı bırakın.</p>
+
+            <h2>3. Modem MTU (Maximum Transmission Unit) Ayarı</h2>
+            <p>Apex Legends sunucuları veri paketlerinin parçalanmasından (Fragmentation) nefret eder. Eğer modeminizin MTU değeri çok yüksekse ve paketler parçalanıyorsa, oyunda "Prediction Error" (iki tane kırmızı paralel çizgi) hatası alırsınız.</p>
+            <ul>
+                <li>Modem arayüzünüze girin (WAN Ayarları bölümüne).</li>
+                <li>MTU değerini bulun (Genelde otomatik 1492 veya 1500'dür).</li>
+                <li>Bu değeri <strong>1472</strong> veya <strong>1450</strong> yaparak deneme yanılma ile kaydedin. Çoğu oyuncu MTU düşürerek Apex'teki takılmalardan tamamen kurtulmuştur.</li>
+            </ul>
+
+            <h2>4. Wi-Fi'dan Kaçının ve QoS Kullanın</h2>
+            <p>Apex Legends sunucu ile sürekli olarak istemci pozisyonunu teyit eder. Odanızın kapısı kapandığında Wi-Fi sinyalinde yaşanan milisaniyelik bir dalgalanma (Jitter), oyunda "lastik gibi geri çekilme" (Rubberbanding) yaşamanıza neden olur. Kablolu bağlantıya geçin ve evdeki diğer kullanıcıların video izlemesi durumuna karşı <a href="bufferbloat-cozumu.html" style="color: var(--accent-blue);">Bufferbloat (QoS)</a> ayarlarınızı kesinlikle yapın.</p>
+
+        </article>
+
+        <!-- Footer -->
+        <footer class="app-footer" style="margin-top: 48px;">
+            <p>&copy; 2026 internethiz.com | Tüm Hakları Saklıdır</p>
+        </footer>
+    </div>
+</body>
+</html>
